@@ -1,153 +1,131 @@
-<!-- SIDEBAR -->
-
 <div class="layout">
-  <!-- SIDEBAR -->
   <aside class="sidebar">
-    <aside class="sidebar">
-      <div class="sidebar-brand">
-        <svg class="brand-icon" viewBox="0 0 34 34" fill="none">
-          <rect x="0.5" y="0.5" width="33" height="33" rx="1" stroke="#d4a843" stroke-width="0.5" />
-          <path
-            d="M6 22 L9 15 L17 13 L25 15 L28 22"
-            stroke="#d4a843"
-            stroke-width="1"
-            fill="none"
-          />
-          <rect x="8" y="20" width="3.5" height="4" rx="2" fill="#d4a843" opacity="0.8" />
-          <rect x="22.5" y="20" width="3.5" height="4" rx="2" fill="#d4a843" opacity="0.8" />
-          <path d="M6 22 L28 22" stroke="#d4a843" stroke-width="1" />
-        </svg>
-        <span class="brand-name">RentCar</span>
-      </div>
+    <!-- Brand -->
+    <div class="sidebar-brand">
+      <svg class="brand-icon" viewBox="0 0 34 34" fill="none">
+        <rect x="0.5" y="0.5" width="33" height="33" rx="1" stroke="#d4a843" stroke-width="0.5" />
+        <path d="M6 22 L9 15 L17 13 L25 15 L28 22" stroke="#d4a843" stroke-width="1" fill="none" />
+        <rect x="8" y="20" width="3.5" height="4" rx="2" fill="#d4a843" opacity="0.8" />
+        <rect x="22.5" y="20" width="3.5" height="4" rx="2" fill="#d4a843" opacity="0.8" />
+        <path d="M6 22 L28 22" stroke="#d4a843" stroke-width="1" />
+      </svg>
+      <span class="brand-name">RentCar</span>
+    </div>
 
-      <p class="nav-section-label">Main</p>
+    <!-- Main Nav -->
+    <nav class="nav-section">
+      <p class="nav-label">Main</p>
 
-      <div class="nav-item" (click)="router.navigate(['/home'])">
-        <svg
-          class="nav-icon"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.5"
-        >
-          <rect x="3" y="3" width="7" height="7" />
-          <rect x="14" y="3" width="7" height="7" />
-          <rect x="3" y="14" width="7" height="7" />
-          <rect x="14" y="14" width="7" height="7" />
-        </svg>
-        Dashboard
-      </div>
+      @for (item of getNavBySection('main'); track item.id) {
+        <div
+          class="nav-item"
+          [class.active]="activeNav === item.id"
+          (click)="selectedNavChanges(item.id)">
 
-      <div class="nav-item" (click)="router.navigate(['/fleet'])">
-        <svg
-          class="nav-icon"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.5"
-        >
-          <path d="M5 17H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v3" />
-          <rect x="9" y="11" width="14" height="10" rx="1" />
-          <circle cx="12" cy="16" r="1" />
-        </svg>
-        Fleet
-        <span class="nav-badge">24</span>
-      </div>
+          @switch (item.id) {
+            @case ('home') {
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="3" y="3" width="7" height="7" />
+                <rect x="14" y="3" width="7" height="7" />
+                <rect x="3" y="14" width="7" height="7" />
+                <rect x="14" y="14" width="7" height="7" />
+              </svg>
+            }
+            @case ('fleet') {
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M5 17H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v3" />
+                <rect x="9" y="11" width="14" height="10" rx="1" />
+                <circle cx="12" cy="16" r="1" />
+              </svg>
+            }
+            @case ('bookings') {
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                <polyline points="14,2 14,8 20,8" />
+              </svg>
+            }
+            @case ('clients') {
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                <circle cx="9" cy="7" r="4" />
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+              </svg>
+            }
+          }
 
-      <div class="nav-item" (click)="router.navigate(['/bookings'])">
-        <svg
-          class="nav-icon"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.5"
-        >
-          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-          <polyline points="14,2 14,8 20,8" />
-        </svg>
-        Bookings
-        <span class="nav-badge">7</span>
-      </div>
+          {{ item.label }}
 
-      <div class="nav-item active" (click)="router.navigate(['/clients'])">
-        <svg
-          class="nav-icon"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.5"
-        >
-          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-          <circle cx="9" cy="7" r="4" />
-          <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-          <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-        </svg>
-        Clients
-        <span class="nav-badge">142</span>
-      </div>
+          @if (item.badge) {
+            <span class="nav-badge">{{ item.badge }}</span>
+          }
+        </div>
+      }
+    </nav>
 
-      <div class="sidebar-divider"></div>
-      <p class="nav-section-label">Finance</p>
+    <!-- Finance Nav -->
+    <nav class="nav-section">
+      <p class="nav-label">Finance</p>
 
-      <div class="nav-item">
-        <svg
-          class="nav-icon"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.5"
-        >
-          <line x1="12" y1="1" x2="12" y2="23" />
-          <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-        </svg>
-        Revenue
-      </div>
+      @for (item of getNavBySection('finance'); track item.id) {
+        <div
+          class="nav-item"
+          [class.active]="activeNav === item.id"
+          (click)="selectedNavChanges(item.id)">
 
-      <div class="nav-item">
-        <svg
-          class="nav-icon"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.5"
-        >
-          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
-        </svg>
-        Analytics
-      </div>
+          @switch (item.id) {
+            @case ('revenue') {
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <line x1="12" y1="1" x2="12" y2="23" />
+                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+              </svg>
+            }
+            @case ('analytics') {
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+              </svg>
+            }
+          }
 
-      <div class="sidebar-divider"></div>
+          {{ item.label }}
+        </div>
+      }
+    </nav>
 
-      <div class="nav-item">
-        <svg
-          class="nav-icon"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.5"
-        >
-          <circle cx="12" cy="12" r="3" />
-          <path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14" />
-        </svg>
-        Settings
-      </div>
+    <!-- Settings -->
+    <nav class="nav-section">
+      @for (item of getNavBySection('settings'); track item.id) {
+        <div
+          class="nav-item"
+          [class.active]="activeNav === item.id"
+          (click)="selectedNavChanges(item.id)">
 
-      <div class="sidebar-footer">
-        @if (auth.user$ | async; as user) {
-          <div class="user-card">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="12" cy="12" r="3" />
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14" />
+          </svg>
+
+          {{ item.label }}
+        </div>
+      }
+    </nav>
+
+    <!-- Footer -->
+    <div class="sidebar-footer">
+      @if (auth.user$ | async; as user) {
+        <div class="user-card">
             <img [src]="user.picture" [alt]="user.name" class="user-avatar-img" />
             <div>
               <div class="user-name">{{ user.name }}</div>
               <div class="user-role">Manager</div>
-            </div>
           </div>
-        }
-      </div>
-    </aside>
+        </div>
+      }
+    </div>
   </aside>
 
-  <!-- MAIN CONTENT -->
-  <div class="content">
-    <router-outlet></router-outlet>
-  </div>
+  <!-- Main Content -->
+  <main class="content">
+    <router-outlet />
+  </main>
 </div>
