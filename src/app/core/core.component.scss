@@ -1,7 +1,163 @@
 :host {
-  display:block;
+  display: block;
   height: 100%;
   width: 100;
-box-sizing: border-box;
-scrollbar-width: none;
+  box-sizing: border-box;
+  scrollbar-width: none;
+}
+
+.layout {
+  display: flex;
+  height: 100vh;
+}
+
+/* ─── SIDEBAR ─── */
+.sidebar {
+  width: 240px;
+  flex-shrink: 0;
+  background: rgba(16, 13, 7, 0.99);
+  border-right: 1px solid var(--gold-line);
+  display: flex;
+  flex-direction: column;
+  padding: 2rem 0;
+  height: 100%;
+  overflow-y: auto;
+  animation: slideIn 0.8s ease forwards;
+
+  &::-webkit-scrollbar {
+    width: 2px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: rgba(212, 168, 67, 0.15);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 1.5rem 2.5rem;
+  border-bottom: 1px solid var(--gold-line);
+  margin-bottom: 1.5rem;
+}
+
+.brand-icon {
+  width: 34px;
+  height: 34px;
+}
+
+.brand-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 4px;
+  color: var(--gold);
+  text-transform: uppercase;
+}
+
+.nav-section-label {
+  font-size: 9px;
+  letter-spacing: 3px;
+  color: rgba(245, 240, 232, 0.4);
+  text-transform: uppercase;
+  padding: 0 1.5rem 0.75rem;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0.75rem 1.5rem;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 2px;
+  color: rgba(245, 240, 232, 0.6);
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-left: 2px solid transparent;
+
+  &:hover {
+    color: var(--text);
+    background: rgba(212, 168, 67, 0.05);
+  }
+
+  &.active {
+    color: var(--gold);
+    border-left-color: var(--gold);
+    background: rgba(212, 168, 67, 0.07);
+  }
+}
+
+.nav-icon {
+  width: 16px;
+  height: 16px;
+  opacity: 0.75;
+  flex-shrink: 0;
+}
+.nav-item.active .nav-icon {
+  opacity: 1;
+}
+
+.nav-badge {
+  margin-left: auto;
+  background: var(--gold);
+  color: #0d0b07;
+  font-size: 9px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 10px;
+}
+
+.sidebar-divider {
+  height: 1px;
+  background: var(--gold-line);
+  margin: 1rem 1.5rem;
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  padding: 1.5rem;
+  border-top: 1px solid var(--gold-line);
+}
+
+.user-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-avatar-img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(212, 168, 67, 0.35);
+  object-fit: cover;
+}
+
+.user-name {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text);
+}
+.user-role {
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: rgba(245, 240, 232, 0.5);
+}
+
+.content {
+  flex: 1;
+  padding: 20px;
 }

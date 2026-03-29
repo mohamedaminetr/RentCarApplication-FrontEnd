@@ -37,4 +37,7 @@ export class LoginComponent {
       logoutParams: { returnTo: window.location.origin },
     });
   }
+  public navigateTo(routeTo: string): void {
+    this.router.navigate([routeTo]);
+  }
 }

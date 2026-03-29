@@ -16,3 +16,29 @@ body {
   overflow: hidden;
   background: #0a0a0a;
 }
+
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  --gold: #d4a843;
+  --gold-dim: rgba(212, 168, 67, 0.2);
+  --gold-line: rgba(212, 168, 67, 0.22);
+  --text: #f5f0e8;
+  --text-muted: rgba(245, 240, 232, 0.6);
+  --text-faint: rgba(245, 240, 232, 0.4);
+  --surface: rgba(28, 24, 14, 0.98);
+  --surface2: rgba(255, 255, 255, 0.04);
+  --green: #6ddbb5;
+  --red: #f06060;
+  --blue: #6aaee8;
+  --purple: #a9a4e8;
+}
