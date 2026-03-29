@@ -39,7 +39,7 @@
           @if (auth.user$ | async; as user) {
             <p class="card-eyebrow">Welcome back</p>
             <h1 class="card-title">{{ user.name }}</h1>
-            <img [src]="user.picture" [alt]="user.name" class="avatar" />
+            <img alt="" [src]="user.picture" [alt]="user.name" class="avatar" />
             <p class="user-email">{{ user.email }}</p>
             <button class="btn btn-secondary" (click)="navigateTo('home')">Home Page</button>
             <button class="btn btn-secondary" (click)="logout()">Sign Out</button>
