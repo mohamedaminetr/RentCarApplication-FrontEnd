@@ -114,7 +114,7 @@
     <div class="sidebar-footer">
       @if (auth.user$ | async; as user) {
         <div class="user-card">
-            <img [src]="user.picture" [alt]="user.name" class="user-avatar-img" />
+            <img [src]="user.picture" [alt]="user.name" class="user-avatar-img" alt="" />
             <div>
               <div class="user-name">{{ user.name }}</div>
               <div class="user-role">Manager</div>
