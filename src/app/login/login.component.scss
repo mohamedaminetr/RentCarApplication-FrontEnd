@@ -1,0 +1,347 @@
+
+:host {
+  height: 100%;
+  width: 100%;
+  scrollbar-width: none;
+  display: block;
+  min-height: 100vh;
+  background: #0a0a0a;
+  font-family: 'Montserrat', sans-serif;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 50% at 50% 60%, rgba(180, 140, 40, 0.07) 0%, transparent 70%),
+      repeating-linear-gradient(
+        180deg,
+        transparent 0px,
+        transparent 59px,
+        rgba(180, 140, 40, 0.04) 60px
+      );
+    pointer-events: none;
+    z-index: 0;
+  }
+}
+
+.page {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  width: 100%;
+  max-width: 1100px;
+  min-height: 100vh;
+  margin: 0 auto;
+  align-items: center;
+}
+
+.left-panel {
+  flex: 1;
+  padding: 4rem;
+  animation: fadeLeft 1s ease forwards;
+  opacity: 0;
+}
+
+.brand-mark {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 4rem;
+}
+
+.brand-icon {
+  width: 42px;
+  height: 42px;
+}
+
+.brand-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: 4px;
+  color: #c9a84c;
+  text-transform: uppercase;
+}
+
+.hero-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 72px;
+  font-weight: 300;
+  line-height: 1.05;
+  color: #f0ece0;
+  margin-bottom: 1.5rem;
+  letter-spacing: -1px;
+
+  em {
+    font-style: italic;
+    color: #c9a84c;
+  }
+}
+
+.hero-sub {
+  font-size: 12px;
+  font-weight: 300;
+  letter-spacing: 3px;
+  color: rgba(240, 236, 224, 0.35);
+  text-transform: uppercase;
+  margin-bottom: 3rem;
+}
+
+.divider {
+  width: 60px;
+  height: 1px;
+  background: linear-gradient(90deg, #c9a84c, transparent);
+  margin-bottom: 2rem;
+}
+
+.features {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 12px;
+  font-weight: 300;
+  letter-spacing: 2px;
+  color: rgba(240, 236, 224, 0.4);
+  text-transform: uppercase;
+}
+
+.feature-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #c9a84c;
+  flex-shrink: 0;
+}
+
+.right-panel {
+  width: 420px;
+  flex-shrink: 0;
+  padding: 3rem;
+  animation: fadeRight 1s ease 0.2s forwards;
+  opacity: 0;
+}
+
+.card {
+  background: rgba(20, 18, 12, 0.95);
+  border: 1px solid rgba(201, 168, 76, 0.2);
+  border-radius: 2px;
+  padding: 3rem;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #c9a84c, transparent);
+  }
+}
+
+.corner-tl,
+.corner-br {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+}
+.corner-tl {
+  top: 12px;
+  left: 12px;
+  border-top: 1px solid rgba(201, 168, 76, 0.4);
+  border-left: 1px solid rgba(201, 168, 76, 0.4);
+}
+.corner-br {
+  bottom: 12px;
+  right: 12px;
+  border-bottom: 1px solid rgba(201, 168, 76, 0.4);
+  border-right: 1px solid rgba(201, 168, 76, 0.4);
+}
+
+.card-eyebrow {
+  font-size: 10px;
+  letter-spacing: 4px;
+  color: #c9a84c;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.card-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 32px;
+  font-weight: 300;
+  color: #f0ece0;
+  margin-bottom: 2.5rem;
+  line-height: 1.2;
+}
+
+.btn {
+  width: 100%;
+  padding: 16px 24px;
+  border: none;
+  border-radius: 1px;
+  cursor: pointer;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  &:active {
+    transform: scale(0.99);
+  }
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #c9a84c 0%, #a8862e 100%);
+  color: #0a0a0a;
+  margin-bottom: 14px;
+  &:hover {
+    opacity: 0.9;
+  }
+}
+
+.btn-secondary {
+  background: transparent;
+  color: #c9a84c;
+  border: 1px solid rgba(201, 168, 76, 0.35);
+  margin-bottom: 2rem;
+  &:hover {
+    border-color: rgba(201, 168, 76, 0.6);
+  }
+}
+
+.separator {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 2rem;
+}
+
+.sep-line {
+  flex: 1;
+  height: 1px;
+  background: rgba(201, 168, 76, 0.1);
+}
+
+.sep-text {
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: rgba(240, 236, 224, 0.2);
+  text-transform: uppercase;
+}
+
+.btn-google {
+  background: rgba(255, 255, 255, 0.03);
+  color: rgba(240, 236, 224, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  margin-bottom: 2rem;
+  &:hover {
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(240, 236, 224, 0.8);
+  }
+}
+
+.card-footer {
+  text-align: center;
+  font-size: 11px;
+  color: rgba(240, 236, 224, 0.2);
+  letter-spacing: 1px;
+  line-height: 1.8;
+
+  a {
+    color: rgba(201, 168, 76, 0.7);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(201, 168, 76, 0.2);
+    padding-bottom: 1px;
+    transition: all 0.2s;
+    &:hover {
+      color: #c9a84c;
+      border-color: #c9a84c;
+    }
+  }
+}
+
+.avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  border: 2px solid rgba(201, 168, 76, 0.4);
+  margin-bottom: 1rem;
+}
+
+.user-email {
+  font-size: 13px;
+  color: rgba(240, 236, 224, 0.4);
+  margin-bottom: 2rem;
+  letter-spacing: 1px;
+}
+
+.error-msg {
+  font-size: 12px;
+  color: #e24b4a;
+  margin-bottom: 1rem;
+  letter-spacing: 1px;
+}
+
+.loading {
+  color: rgba(240, 236, 224, 0.4);
+  font-size: 12px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  text-align: center;
+  padding: 2rem 0;
+}
+
+@keyframes fadeLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .left-panel {
+    display: none;
+  }
+  .right-panel {
+    width: 100%;
+    padding: 2rem 1.5rem;
+  }
+}
+
+span , p{
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}

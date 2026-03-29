@@ -1,5 +1,5 @@
 import { Component, Inject } from '@angular/core';
-import { CommonModule, JsonPipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '@auth0/auth0-angular';
 
@@ -8,7 +8,7 @@ import { AuthService } from '@auth0/auth0-angular';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
   standalone: true,
-  imports: [CommonModule, JsonPipe],
+  imports: [CommonModule],
 })
 export class LoginComponent {
   constructor(
@@ -24,15 +24,17 @@ export class LoginComponent {
     });
   }
 
-  public logout(): void {
-    this.auth.logout({
-      logoutParams: {
-        returnTo: window.location.origin,
+  public loginWithGoogle(): void {
+    this.auth.loginWithRedirect({
+      authorizationParams: {
+        connection: 'google-oauth2',
       },
     });
   }
 
-  public navigateTo(route: string): void {
-    this.router.navigate([route]);
+  public logout(): void {
+    this.auth.logout({
+      logoutParams: { returnTo: window.location.origin },
+    });
   }
 }
