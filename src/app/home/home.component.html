@@ -41,7 +41,7 @@
           </svg>
         </div>
         @if (auth.user$ | async; as user) {
-          <img [src]="user.picture" [alt]="user.name" class="topbar-avatar" />
+          <img [src]="user.picture" [alt]="user.name" class="topbar-avatar" alt="" />
         }
       </div>
     </header>
