@@ -1,0 +1,28 @@
+<div class="login-container">
+  @if (auth.isLoading$ | async) {
+    <div class="loading">
+      <p>Loading...</p>
+    </div>
+  } @else {
+    @if (auth.isAuthenticated$ | async) {
+      @if (auth.user$ | async; as user) {
+        <div class="profile">
+          <img [src]="user.picture" [alt]="user.name" />
+          <h2>Welcome, {{ user.name }}</h2>
+          <p>{{ user.email }}</p>
+          <pre>{{ user | json }}</pre>
+          <button (click)="logout()">Logout</button>
+        </div>
+      }
+    } @else {
+      <div class="auth-buttons">
+        @if (auth.error$ | async; as error) {
+          <p class="error">Error: {{ error.message }}</p>
+        }
+        <h1>Welcome to RentCar</h1>
+        <button (click)="login(false)">Log In</button>
+        <button (click)="login(true)">Sign Up</button>
+      </div>
+    }
+  }
+</div>
