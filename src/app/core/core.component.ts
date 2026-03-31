@@ -1,28 +1,28 @@
 import { CommonModule, AsyncPipe } from '@angular/common';
-import { AfterViewInit, Component, Inject, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, Inject, OnInit } from '@angular/core';
 import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
 import { AuthService } from '@auth0/auth0-angular';
+import { MatIconModule } from '@angular/material/icon';
 import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'rentcar-homepage',
   templateUrl: './core.component.html',
   styleUrl: './core.component.scss',
-  imports: [RouterOutlet, CommonModule, FormsModule, AsyncPipe],
+  imports: [RouterOutlet, CommonModule, AsyncPipe, MatIconModule],
 })
-export class CoreComponent implements OnInit, AfterViewInit {
-  public navItems = [
-    { id: 'home', label: 'Dashboard', route: '/home', badge: null, section: 'main' },
-    { id: 'fleet', label: 'Fleet', route: '/fleet', badge: '24', section: 'main' },
-    { id: 'bookings', label: 'Bookings', route: '/bookings', badge: '7', section: 'main' },
-    { id: 'clients', label: 'Clients', route: '/clients', badge: '142', section: 'main' },
-    { id: 'revenue', label: 'Revenue', route: '/revenue', badge: null, section: 'finance' },
-    { id: 'analytics', label: 'Analytics', route: '/analytics', badge: null, section: 'finance' },
-    { id: 'settings', label: 'Settings', route: '/settings', badge: null, section: 'settings' },
-  ];
+export class CoreComponent implements OnInit {
+  public path = '';
 
-  activeNav: string = '';
+  public navItems = [
+    { id: 'home', label: 'Dashboard', route: '/home', badge: null, icon: 'dashboard' },
+    { id: 'fleet', label: 'Fleet', route: '/fleet', badge: '24', icon: 'directions_car' },
+    { id: 'bookings', label: 'Bookings', route: '/bookings', badge: '7', icon: 'receipt_long' },
+    { id: 'clients', label: 'Clients', route: '/clients', badge: '142', icon: 'group' },
+    { id: 'revenue', label: 'Revenue', route: '/revenue', badge: null, icon: 'payments' },
+    { id: 'analytics', label: 'Analytics', route: '/analytics', badge: null, icon: 'bar_chart' },
+    { id: 'settings', label: 'Settings', route: '/settings', badge: null, icon: 'settings' },
+  ];
 
   constructor(
     @Inject(AuthService) public auth: AuthService,
@@ -30,32 +30,22 @@ export class CoreComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit(): void {
-    this.syncActiveNav(this.router.url);
-
+    this.path = this.router.url;
     this.router.events
-      .pipe(filter((event) => event instanceof NavigationEnd))
-      .subscribe((event: NavigationEnd) => {
-        this.syncActiveNav(event.url);
+      .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
+      .subscribe((event) => {
+        this.path = event.url;
       });
   }
 
-  ngAfterViewInit(): void {}
-
-  private syncActiveNav(url: string): void {
-    const currentRoute = url.split('/')[1] || 'home';
-    const match = this.navItems.find((n) => n.route === `/${currentRoute}`);
-    this.activeNav = match?.id || 'home';
-  }
-
   public selectedNavChanges(navId: string): void {
-    this.activeNav = navId;
     const nav = this.navItems.find((n) => n.id === navId);
-    if (nav) {
-      this.router.navigate([nav.route]);
-    }
+    if (nav) this.router.navigate([nav.route]);
   }
 
-  public getNavBySection(section: string) {
-    return this.navItems.filter((item) => item.section === section);
+  public isSelected(path: string): boolean {
+    return this.path === path || this.path.startsWith(path + '/');
   }
+
+
 }
