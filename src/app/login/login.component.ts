@@ -7,7 +7,6 @@ import { AuthService } from '@auth0/auth0-angular';
   selector: 'rentcar-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
-  standalone: true,
   imports: [CommonModule],
 })
 export class LoginComponent {

@@ -19,7 +19,6 @@ export interface Client {
   selector: 'rentcar-clients',
   templateUrl: './clients.component.html',
   styleUrls: ['./clients.component.scss'],
-  standalone: true,
   imports: [CommonModule, FormsModule, TitleCasePipe],
 })
 export class ClientsComponent {
