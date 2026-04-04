@@ -4,6 +4,7 @@ import { LoginComponent } from './login/login.component';
 import { CoreComponent } from './core/core.component';
 import { ClientsComponent } from './clients/clients.component';
 import { HomeComponent } from './home/home.component';
+import { FleetComponent } from './fleet/fleet.component';
 
 export const routes: Routes = [
   {
@@ -21,6 +22,7 @@ export const routes: Routes = [
     children: [
       { path: 'home', component: HomeComponent },
       { path: 'clients', component: ClientsComponent },
+      { path: 'fleet', component: FleetComponent },
     ],
   },
 ];

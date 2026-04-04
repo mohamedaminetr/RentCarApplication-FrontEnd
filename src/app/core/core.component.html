@@ -40,7 +40,7 @@
     <div class="sidebar-footer">
       @if (auth.user$ | async; as user) {
         <div class="user-card">
-          @if (user.picture ) {
+          @if (user.picture) {
             <img
               alt="userAvatar"
               [src]="user.picture"

@@ -2,12 +2,13 @@ import { Component, Inject } from '@angular/core';
 import { CommonModule, TitleCasePipe } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '@auth0/auth0-angular';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'rentcar-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
-  imports: [CommonModule, RouterModule, TitleCasePipe],
+  imports: [CommonModule, RouterModule, TitleCasePipe, MatIcon],
 })
 export class HomeComponent {
   public x: number = 0;

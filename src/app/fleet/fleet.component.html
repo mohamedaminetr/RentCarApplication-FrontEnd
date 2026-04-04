@@ -1,0 +1,290 @@
+<div class="shell">
+  <div class="bg-layer"></div>
+
+  <main class="main">
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <span class="topbar-eyebrow">Vehicle Management</span>
+        <span class="topbar-title">Fleet</span>
+      </div>
+      <div class="topbar-right">
+        <div class="search-box">
+          <mat-icon
+            style="font-size: 16px; width: 16px; height: 16px; color: rgba(245, 240, 232, 0.4)"
+            >search</mat-icon
+          >
+          <input type="text" placeholder="Search vehicles..." [(ngModel)]="searchQuery" />
+        </div>
+        <div class="topbar-btn">
+          <mat-icon style="font-size: 18px; width: 18px; height: 18px">notifications</mat-icon>
+        </div>
+        <div class="topbar-btn logout-btn" (click)="logout()">
+          <mat-icon>logout</mat-icon>
+        </div>
+        @if (auth.user$ | async; as user) {
+          <img [src]="user.picture" [alt]="user.name ?? ''" class="topbar-avatar" alt="userName" />
+        }
+      </div>
+    </header>
+
+    <div class="content">
+      <!-- STATS -->
+      <div class="stats-grid">
+        @for (stat of stats; track stat.label) {
+          <div class="stat-card">
+            <div class="stat-label">{{ stat.label }}</div>
+            <div class="stat-value">{{ stat.value }}</div>
+            <div class="stat-change" [class.up]="stat.up" [class.down]="!stat.up">
+              {{ stat.change }}
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- TOOLBAR -->
+      <div class="toolbar">
+        <div class="toolbar-left">
+          <button
+            class="filter-btn"
+            [class.active]="activeFilter === 'all'"
+            (click)="setFilter('all')"
+          >
+            All (24)
+          </button>
+          <button
+            class="filter-btn"
+            [class.active]="activeFilter === 'available'"
+            (click)="setFilter('available')"
+          >
+            Available (11)
+          </button>
+          <button
+            class="filter-btn"
+            [class.active]="activeFilter === 'rented'"
+            (click)="setFilter('rented')"
+          >
+            Rented (10)
+          </button>
+          <button
+            class="filter-btn"
+            [class.active]="activeFilter === 'service'"
+            (click)="setFilter('service')"
+          >
+            Service (3)
+          </button>
+        </div>
+        <div style="display: flex; gap: 10px; align-items: center">
+          <div class="view-btns">
+            <div class="view-btn" [class.active]="viewMode === 'grid'" (click)="setView('grid')">
+              <mat-icon style="font-size: 16px; width: 16px; height: 16px">grid_view</mat-icon>
+            </div>
+            <div class="view-btn" [class.active]="viewMode === 'list'" (click)="setView('list')">
+              <mat-icon style="font-size: 16px; width: 16px; height: 16px"
+                >format_list_bulleted</mat-icon
+              >
+            </div>
+          </div>
+          <button class="add-btn" (click)="router.navigate(['/fleet/new'])">
+            <mat-icon style="font-size: 14px; width: 14px; height: 14px">add</mat-icon>
+            Add Vehicle
+          </button>
+        </div>
+      </div>
+
+      <!-- GRID VIEW -->
+      @if (viewMode === 'grid') {
+        <div class="car-grid">
+          @for (vehicle of filteredVehicles; track vehicle.id) {
+            <div class="car-card">
+              <div class="car-header">
+                <span class="car-plate">{{ vehicle.plate }}</span>
+                <span class="badge" [class]="'badge-' + vehicle.status">
+                  {{ vehicle.status === 'service' ? 'Service' : (vehicle.status | titlecase) }}
+                </span>
+              </div>
+
+              <!-- Car SVG illustration — kept as SVG (decorative, not an icon) -->
+              <svg class="car-svg" width="180" height="70" viewBox="0 0 180 70" fill="none">
+                <path
+                  d="M20 50 L30 28 L70 20 L130 20 L155 28 L160 50"
+                  [attr.stroke]="
+                    vehicle.status === 'service'
+                      ? 'rgba(240,96,96,0.5)'
+                      : vehicle.status === 'rented'
+                        ? 'rgba(212,168,67,0.5)'
+                        : '#d4a843'
+                  "
+                  stroke-width="1.5"
+                  fill="none"
+                />
+                <path
+                  d="M35 28 L50 16 L120 16 L140 28"
+                  [attr.stroke]="
+                    vehicle.status === 'service' ? 'rgba(240,96,96,0.25)' : 'rgba(212,168,67,0.3)'
+                  "
+                  stroke-width="1"
+                  fill="none"
+                />
+                <ellipse
+                  cx="45"
+                  cy="52"
+                  rx="12"
+                  ry="8"
+                  [attr.stroke]="
+                    vehicle.status === 'service'
+                      ? 'rgba(240,96,96,0.5)'
+                      : vehicle.status === 'rented'
+                        ? 'rgba(212,168,67,0.5)'
+                        : '#d4a843'
+                  "
+                  stroke-width="1.5"
+                  [attr.fill]="
+                    vehicle.status === 'service' ? 'rgba(240,96,96,0.05)' : 'rgba(212,168,67,0.08)'
+                  "
+                />
+                <ellipse
+                  cx="135"
+                  cy="52"
+                  rx="12"
+                  ry="8"
+                  [attr.stroke]="
+                    vehicle.status === 'service'
+                      ? 'rgba(240,96,96,0.5)'
+                      : vehicle.status === 'rented'
+                        ? 'rgba(212,168,67,0.5)'
+                        : '#d4a843'
+                  "
+                  stroke-width="1.5"
+                  [attr.fill]="
+                    vehicle.status === 'service' ? 'rgba(240,96,96,0.05)' : 'rgba(212,168,67,0.08)'
+                  "
+                />
+                <line
+                  x1="20"
+                  y1="50"
+                  x2="160"
+                  y2="50"
+                  [attr.stroke]="
+                    vehicle.status === 'service'
+                      ? 'rgba(240,96,96,0.5)'
+                      : vehicle.status === 'rented'
+                        ? 'rgba(212,168,67,0.5)'
+                        : '#d4a843'
+                  "
+                  stroke-width="1.5"
+                />
+              </svg>
+
+              <div class="car-name">{{ vehicle.name }}</div>
+              <div class="car-type">{{ vehicle.type }}</div>
+
+              <div class="car-meta">
+                <div class="meta-item">
+                  <div class="meta-label">Year</div>
+                  <div class="meta-value">{{ vehicle.year }}</div>
+                </div>
+                <div class="meta-item">
+                  <div class="meta-label">Rate/Day</div>
+                  <div class="meta-value">{{ formatCurrency(vehicle.ratePerDay) }}</div>
+                </div>
+                <div class="meta-item">
+                  <div class="meta-label">Mileage</div>
+                  <div class="meta-value">{{ formatMileage(vehicle.mileage) }}</div>
+                </div>
+                <div class="meta-item">
+                  <div class="meta-label">
+                    {{ vehicle.returnDate ? 'Return' : vehicle.readyDate ? 'Est. Ready' : 'Fuel' }}
+                  </div>
+                  <div
+                    class="meta-value"
+                    [class.date-warning]="vehicle.returnDate"
+                    [class.date-ok]="vehicle.readyDate"
+                  >
+                    {{ vehicle.returnDate ?? vehicle.readyDate ?? vehicle.fuel }}
+                  </div>
+                </div>
+              </div>
+
+              <div class="car-actions">
+                <button class="action-primary" (click)="router.navigate(['/fleet', vehicle.id])">
+                  {{ primaryAction(vehicle) }}
+                </button>
+                @if (vehicle.status !== 'service') {
+                  <button
+                    class="action-secondary"
+                    (click)="router.navigate(['/fleet', vehicle.id])"
+                  >
+                    Details
+                  </button>
+                }
+              </div>
+            </div>
+          }
+
+          @if (filteredVehicles.length === 0) {
+            <div class="empty-state">
+              <mat-icon
+                style="font-size: 32px; width: 32px; height: 32px; color: rgba(212, 168, 67, 0.3)"
+              >
+                directions_car
+              </mat-icon>
+              <p>No vehicles match your search</p>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- BOTTOM ROW -->
+      <div class="bottom-row">
+        <!-- SERVICE SCHEDULE -->
+        <div class="panel panel-bottom">
+          <div class="panel-header">
+            <div>
+              <div class="panel-eyebrow">Upcoming</div>
+              <div class="panel-title">Service Schedule</div>
+            </div>
+            <span class="panel-link">View All</span>
+          </div>
+          @for (svc of serviceSchedule; track svc.name) {
+            <div class="svc-row">
+              <div class="svc-dot" [class]="svc.dotClass"></div>
+              <div class="svc-info">
+                <div class="svc-name">{{ svc.name }}</div>
+                <div class="svc-detail">{{ svc.detail }}</div>
+              </div>
+              <div class="svc-date">{{ svc.date }}</div>
+            </div>
+          }
+        </div>
+
+        <!-- UTILIZATION -->
+        <div class="panel panel-bottom">
+          <div class="panel-header">
+            <div>
+              <div class="panel-eyebrow">This month</div>
+              <div class="panel-title">Utilization</div>
+            </div>
+          </div>
+          <div class="util-list">
+            @for (v of utilization; track v.id) {
+              <div class="util-item">
+                <div class="util-header">
+                  <span class="util-label">{{ v.name }}</span>
+                  <span class="util-val">{{ v.utilization }}%</span>
+                </div>
+                <div class="util-bar">
+                  <div
+                    class="util-fill"
+                    [class]="utilizationColor(v.utilization)"
+                    [style.width.%]="v.utilization"
+                  ></div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

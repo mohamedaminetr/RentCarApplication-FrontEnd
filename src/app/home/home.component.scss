@@ -1,5 +1,3 @@
-
-
 .bg-layer {
   position: fixed;
   inset: 0;
@@ -33,8 +31,6 @@
   z-index: 1;
   overflow: hidden;
 }
-
-
 
 /* ─── MAIN ─── */
 .main {
@@ -510,9 +506,6 @@
 }
 
 @media (max-width: 768px) {
-  .sidebar {
-    display: none;
-  }
   .bottom-row {
     grid-template-columns: 1fr;
   }
