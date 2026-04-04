@@ -38,9 +38,22 @@ export class CoreComponent implements OnInit {
       });
   }
 
+  isMobileMenuOpen = false;
+
+  toggleMobileMenu() {
+    this.isMobileMenuOpen = !this.isMobileMenuOpen;
+  }
+
+  closeMobileMenu() {
+    this.isMobileMenuOpen = false;
+  }
+
   public selectedNavChanges(navId: string): void {
     const nav = this.navItems.find((n) => n.id === navId);
-    if (nav) this.router.navigate([nav.route]);
+    if (nav) {
+      this.router.navigate([nav.route]);
+      this.closeMobileMenu();
+    }
   }
 
   public isSelected(path: string): boolean {

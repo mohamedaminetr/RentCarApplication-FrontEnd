@@ -2,12 +2,13 @@ import { Component, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '@auth0/auth0-angular';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'rentcar-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
-  imports: [CommonModule],
+  imports: [CommonModule, MatIconModule],
 })
 export class LoginComponent {
   constructor(

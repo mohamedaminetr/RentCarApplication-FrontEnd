@@ -1,0 +1,91 @@
+<div class="shell">
+  <div class="bg-layer"></div>
+
+  <!-- MAIN -->
+  <main class="main">
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <span class="topbar-eyebrow">Reservations</span>
+        <span class="topbar-title">Bookings Management</span>
+      </div>
+      <div class="topbar-right">
+        <div class="search-box">
+          <mat-icon
+            style="font-size: 16px; width: 16px; height: 16px; color: rgba(245, 240, 232, 0.3)"
+            >search</mat-icon
+          >
+          <input type="text" placeholder="Search bookings..." />
+        </div>
+        <div class="topbar-btn"><mat-icon>filter_list</mat-icon></div>
+      </div>
+    </header>
+
+    <!-- CONTENT -->
+    <div class="content">
+      <!-- TOOLBAR -->
+      <div class="toolbar">
+        <div class="toolbar-left">
+          <button class="filter-btn" [class.active]="currentFilter === 'All'" (click)="setFilter('All')">All</button>
+          <button class="filter-btn" [class.active]="currentFilter === 'Pending'" (click)="setFilter('Pending')">Pending</button>
+          <button class="filter-btn" [class.active]="currentFilter === 'Confirmed'" (click)="setFilter('Confirmed')">Confirmed</button>
+          <button class="filter-btn" [class.active]="currentFilter === 'Completed'" (click)="setFilter('Completed')">Completed</button>
+          <button class="filter-btn" [class.active]="currentFilter === 'Cancelled'" (click)="setFilter('Cancelled')">Cancelled</button>
+        </div>
+        <button class="add-btn">
+          <mat-icon style="font-size: 16px; width: 16px; height: 16px">add</mat-icon> New Booking
+        </button>
+      </div>
+
+      <!-- TABLE -->
+      <div class="panel">
+        <div class="table-head">
+          <div class="th">Client</div>
+          <div class="th">Car Model</div>
+          <div class="th">Pickup Date</div>
+          <div class="th">Return Date</div>
+          <div class="th">Status</div>
+          <div class="th" style="text-align: right">Amount</div>
+          <div class="th"></div>
+        </div>
+
+        <div class="client-row" *ngFor="let booking of filteredBookings">
+          <div class="td client-info">
+            <div class="avatar av-gold">{{ booking.initials }}</div>
+            <div>
+              <div class="client-name">{{ booking.clientName }}</div>
+              <div class="client-email">{{ booking.bookingId }}</div>
+            </div>
+          </div>
+          <div class="td">
+            <div class="client-name">{{ booking.carName }}</div>
+            <div class="client-email">{{ booking.plate }}</div>
+          </div>
+          <div class="td">{{ booking.pickup }}</div>
+          <div class="td">{{ booking.return }}</div>
+          <div class="td">
+            <span
+              class="badge"
+              [ngClass]="{
+                'badge-active': booking.status === 'Confirmed',
+                'badge-vip': booking.status === 'Pending',
+                'badge-available': booking.status === 'Completed',
+                'badge-inactive': booking.status === 'Cancelled',
+              }"
+              >{{ booking.status }}</span
+            >
+          </div>
+          <div class="td td-amount" style="text-align: right">{{ booking.amount }}</div>
+          <div class="td row-actions" style="justify-content: flex-end">
+            <div class="row-btn">
+              <mat-icon style="font-size: 16px; width: 16px; height: 16px">edit</mat-icon>
+            </div>
+            <div class="row-btn">
+              <mat-icon style="font-size: 16px; width: 16px; height: 16px">delete</mat-icon>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

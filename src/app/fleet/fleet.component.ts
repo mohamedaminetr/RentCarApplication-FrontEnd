@@ -4,6 +4,8 @@ import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from '@auth0/auth0-angular';
+import { AddVehicleComponent } from './add-vehicle/add-vehicle.component';
+import { VehicleDetailsComponent } from './vehicle-details/vehicle-details.component';
 
 export type VehicleStatus = 'available' | 'rented' | 'service';
 
@@ -20,28 +22,34 @@ export interface Vehicle {
   returnDate?: string;
   readyDate?: string;
   utilization: number;
+  image?: string;
 }
 
 @Component({
   selector: 'rentcar-fleet',
   templateUrl: './fleet.component.html',
   styleUrls: ['./fleet.component.scss'],
-  standalone: true,
-  imports: [CommonModule, FormsModule, MatIconModule, TitleCasePipe],
+  imports: [CommonModule, FormsModule, MatIconModule, TitleCasePipe, AddVehicleComponent, VehicleDetailsComponent],
 })
 export class FleetComponent {
   searchQuery = '';
   activeFilter: 'all' | VehicleStatus = 'all';
   viewMode: 'grid' | 'list' = 'grid';
+  showAddModal = false;
+  selectedVehicle: Vehicle | null = null;
 
-  stats = [
+  public selectVehicle(v: Vehicle) {
+    this.selectedVehicle = v;
+  }
+
+  public stats = [
     { label: 'Total Vehicles', value: '24', change: '↑ 2 added this month', up: true },
     { label: 'Available Now', value: '11', change: '46% of fleet', up: true },
     { label: 'Currently Rented', value: '10', change: '↑ 3 vs last week', up: true },
     { label: 'In Service', value: '3', change: '2 overdue', up: false },
   ];
 
-  vehicles: Vehicle[] = [
+  public vehicles: Vehicle[] = [
     {
       id: '1',
       plate: 'TN · 2847 AB',
@@ -53,6 +61,8 @@ export class FleetComponent {
       fuel: 'Diesel',
       status: 'available',
       utilization: 88,
+      image:
+        'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&q=80&w=800',
     },
     {
       id: '2',
@@ -66,6 +76,8 @@ export class FleetComponent {
       status: 'rented',
       returnDate: 'Apr 06',
       utilization: 71,
+      image:
+        'https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&q=80&w=800',
     },
     {
       id: '3',
@@ -79,6 +91,8 @@ export class FleetComponent {
       status: 'service',
       readyDate: 'Apr 08',
       utilization: 34,
+      image:
+        'https://di-uploads-pod2.dealerinspire.com/waltersporsche/uploads/2024/06/2024-porsche-cayenne.jpg',
     },
     {
       id: '4',
@@ -91,6 +105,8 @@ export class FleetComponent {
       fuel: 'Hybrid',
       status: 'available',
       utilization: 58,
+      image:
+        'https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?auto=format&fit=crop&q=80&w=800',
     },
     {
       id: '5',
@@ -104,6 +120,8 @@ export class FleetComponent {
       status: 'rented',
       returnDate: 'Apr 10',
       utilization: 76,
+      image:
+        'https://di-uploads-pod11.dealerinspire.com/reevesimportmotorcars/uploads/2019/07/2019-range-rover-sport-1024x588.jpg',
     },
     {
       id: '6',
@@ -116,10 +134,12 @@ export class FleetComponent {
       fuel: 'Hybrid',
       status: 'available',
       utilization: 62,
+      image:
+        'https://www.lexus.com.kh/content/dam/lexus-v3-blueprint/models/sedan/ls/ls-500/my21/overview/ls500-overview.jpg.jpg',
     },
   ];
 
-  serviceSchedule = [
+  public serviceSchedule = [
     {
       name: 'Porsche Cayenne',
       detail: 'Engine maintenance · TN · 5521 EF',
@@ -137,7 +157,7 @@ export class FleetComponent {
     @Inject(AuthService) public auth: AuthService,
   ) {}
 
-  get filteredVehicles(): Vehicle[] {
+  public get filteredVehicles(): Vehicle[] {
     return this.vehicles.filter((v) => {
       const matchFilter = this.activeFilter === 'all' || v.status === this.activeFilter;
       const matchSearch =
@@ -147,32 +167,37 @@ export class FleetComponent {
     });
   }
 
-  get utilization(): Vehicle[] {
+  public get utilization(): Vehicle[] {
     return [...this.vehicles].sort((a, b) => b.utilization - a.utilization);
   }
 
-  setFilter(f: 'all' | VehicleStatus): void {
+  public setFilter(f: 'all' | VehicleStatus): void {
     this.activeFilter = f;
   }
-  setView(v: 'grid' | 'list'): void {
+  public setView(v: 'grid' | 'list'): void {
     this.viewMode = v;
   }
 
-  formatMileage(km: number): string {
+  public formatMileage(km: number): string {
     return km.toLocaleString() + ' km';
   }
-  formatCurrency(n: number): string {
+  public formatCurrency(n: number): string {
     return '$' + n.toLocaleString();
   }
 
-  utilizationColor(pct: number): string {
+  public onVehicleAdd(vehicle: Vehicle) {
+    this.vehicles.unshift(vehicle);
+    this.showAddModal = false;
+  }
+
+  public utilizationColor(pct: number): string {
     if (pct >= 75) return 'fill-gold';
     if (pct >= 50) return 'fill-green';
     if (pct >= 30) return 'fill-blue';
     return 'fill-red';
   }
 
-  primaryAction(v: Vehicle): string {
+  public primaryAction(v: Vehicle): string {
     if (v.status === 'available') return 'Rent Now';
     if (v.status === 'rented') return 'View Rental';
     return 'View Service';

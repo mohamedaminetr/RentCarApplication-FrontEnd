@@ -1,5 +1,21 @@
 <div class="layout">
-  <aside class="sidebar">
+
+  <!-- Mobile Header (Hidden on Desktop) -->
+  <div class="mobile-header">
+    <div class="sidebar-brand">
+      <mat-icon class="brand-icon">directions_car</mat-icon>
+      <span class="brand-name">RentCar</span>
+    </div>
+    <button class="mobile-menu-btn" (click)="toggleMobileMenu()">
+      <mat-icon>menu</mat-icon>
+    </button>
+  </div>
+
+  @if (isMobileMenuOpen) {
+    <div class="sidebar-overlay" (click)="closeMobileMenu()"></div>
+  }
+
+  <aside class="sidebar" [class.open]="isMobileMenuOpen">
     <!-- Brand -->
     <div class="sidebar-brand">
       <mat-icon class="brand-icon">directions_car</mat-icon>

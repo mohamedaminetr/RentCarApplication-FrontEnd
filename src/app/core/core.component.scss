@@ -21,24 +21,12 @@
   padding: 2rem 0;
   height: 100%;
   overflow-y: auto;
-  animation: slideIn 0.8s ease forwards;
 
   &::-webkit-scrollbar {
     width: 2px;
   }
   &::-webkit-scrollbar-thumb {
     background: rgba(212, 168, 67, 0.15);
-  }
-}
-
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateX(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
   }
 }
 
@@ -171,4 +159,88 @@
   padding-left: 1.5rem;
   color: var(--gold);
   padding-bottom: 20px;
+}
+
+/* ─── MOBILE HEADER ─── */
+.mobile-header {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 999;
+  height: 56px;
+  background: rgba(16, 13, 7, 0.98);
+  border-bottom: 1px solid var(--gold-line);
+  padding: 0 1rem;
+  align-items: center;
+  justify-content: space-between;
+
+  .sidebar-brand {
+    padding: 0;
+    border-bottom: none;
+    margin-bottom: 0;
+  }
+}
+
+.mobile-menu-btn {
+  background: transparent;
+  border: 1px solid var(--gold-line);
+  color: var(--gold);
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: rgba(212, 168, 67, 0.1);
+  }
+}
+
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 1000;
+}
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 768px) {
+  .mobile-header {
+    display: flex;
+  }
+
+  .sidebar-overlay {
+    display: block;
+  }
+
+  .layout {
+    flex-direction: column;
+    padding-top: 56px;
+  }
+
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: -280px;
+    width: 270px;
+    height: 100vh;
+    z-index: 1001;
+    transition: left 0.3s ease;
+    animation: none;
+
+    &.open {
+      left: 0;
+    }
+  }
+
+  .content {
+    width: 100%;
+    padding: 12px;
+    overflow-x: hidden;
+  }
 }

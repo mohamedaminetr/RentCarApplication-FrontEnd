@@ -5,6 +5,10 @@ import { CoreComponent } from './core/core.component';
 import { ClientsComponent } from './clients/clients.component';
 import { HomeComponent } from './home/home.component';
 import { FleetComponent } from './fleet/fleet.component';
+import { BookingsComponent } from './bookings/bookings.component';
+import { RevenueComponent } from './revenue/revenue.component';
+import { AnalyticsComponent } from './analytics/analytics.component';
+import { SettingsComponent } from './settings/settings.component';
 
 export const routes: Routes = [
   {
@@ -23,6 +27,10 @@ export const routes: Routes = [
       { path: 'home', component: HomeComponent },
       { path: 'clients', component: ClientsComponent },
       { path: 'fleet', component: FleetComponent },
+      { path: 'bookings', component: BookingsComponent },
+      { path: 'revenue', component: RevenueComponent },
+      { path: 'analytics', component: AnalyticsComponent },
+      { path: 'settings', component: SettingsComponent },
     ],
   },
 ];

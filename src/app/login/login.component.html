@@ -2,13 +2,11 @@
   <!-- Left Panel -->
   <div class="left-panel">
     <div class="brand-mark">
-      <svg class="brand-icon" viewBox="0 0 42 42" fill="none">
-        <rect x="1" y="1" width="40" height="40" rx="1" stroke="#c9a84c" stroke-width="0.5" />
-        <path d="M8 27 L12 18 L20 16 L28 18 L34 27" stroke="#c9a84c" stroke-width="1" fill="none" />
-        <rect x="10" y="24" width="4" height="5" rx="2.5" fill="#c9a84c" opacity="0.8" />
-        <rect x="28" y="24" width="4" height="5" rx="2.5" fill="#c9a84c" opacity="0.8" />
-        <path d="M8 27 L34 27" stroke="#c9a84c" stroke-width="1" />
-      </svg>
+      <mat-icon
+        class="brand-icon"
+        style="font-size: 32px; width: 32px; height: 32px; color: #c9a84c"
+        >directions_car</mat-icon
+      >
       <span class="brand-name">RentCar</span>
     </div>
     <div class="hero-text">Drive in<br /><em>pure</em><br />luxury.</div>
@@ -43,7 +41,6 @@
             <p class="user-email">{{ user.email }}</p>
             <button class="btn btn-secondary" (click)="navigateTo('home')">Home Page</button>
             <button class="btn btn-secondary" (click)="logout()">Sign Out</button>
-
           }
         } @else {
           <p class="card-eyebrow">Welcome back</p>
@@ -63,6 +60,7 @@
           </div>
 
           <button class="btn btn-google" (click)="loginWithGoogle()">
+            <!-- google svg  -->
             <svg width="16" height="16" viewBox="0 0 24 24">
               <path
                 fill="#4285F4"
