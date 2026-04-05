@@ -1,0 +1,177 @@
+<div class="modal-overlay" (click)="onCancel()">
+  <div class="dialog-box panel" (click)="$event.stopPropagation()" [class.dialog-delete]="isDelete">
+    <!-- Close -->
+    <button class="close-btn" (click)="onCancel()">
+      <mat-icon>close</mat-icon>
+    </button>
+
+    <!-- Header -->
+    <div class="dialog-header">
+      <div
+        class="dialog-icon"
+        [class.icon-new]="isNew"
+        [class.icon-edit]="isEdit"
+        [class.icon-delete]="isDelete"
+      >
+        <mat-icon *ngIf="isNew">add_circle</mat-icon>
+        <mat-icon *ngIf="isEdit">edit</mat-icon>
+        <mat-icon *ngIf="isDelete">delete_forever</mat-icon>
+      </div>
+      <div>
+        <div class="dialog-eyebrow">Bookings Management</div>
+        <h2 class="dialog-title">{{ dialogTitle }}</h2>
+      </div>
+    </div>
+
+    <!-- ── DELETE CONFIRMATION ──────────────────────────────────────── -->
+    @if (isDelete) {
+      <div class="delete-body">
+        <div class="delete-ring">
+          <mat-icon class="delete-warning-icon">warning_amber</mat-icon>
+        </div>
+        <p class="delete-headline">Remove this booking?</p>
+        <p class="delete-sub">
+          You're about to permanently delete booking
+          <strong>{{ form.bookingId }}</strong> for <strong>{{ form.clientName }}</strong
+          >. This cannot be undone.
+        </p>
+
+        <div class="preview-card">
+          <div class="preview-avatar">{{ form.initials }}</div>
+          <div class="preview-info">
+            <div class="preview-name">{{ form.clientName }}</div>
+            <div class="preview-meta">{{ form.carName }} · {{ form.plate }}</div>
+          </div>
+          <span
+            class="badge"
+            [ngClass]="{
+              'badge-active': form.status === 'Confirmed',
+              'badge-vip': form.status === 'Pending',
+              'badge-available': form.status === 'Completed',
+              'badge-inactive': form.status === 'Cancelled',
+            }"
+            >{{ form.status }}</span
+          >
+        </div>
+      </div>
+    }
+
+    <!-- ── FORM (New / Edit) ────────────────────────────────────────── -->
+    @if (!isDelete) {
+      <div class="form-body">
+        <div class="form-row">
+          <div class="form-field">
+            <label class="field-label">Client Name</label>
+            <div class="field-wrap">
+              <mat-icon class="field-icon">person</mat-icon>
+              <input
+                class="field-input"
+                type="text"
+                placeholder="Full name"
+                [(ngModel)]="form.clientName"
+              />
+            </div>
+          </div>
+          <div class="form-field">
+            <label class="field-label">Booking ID</label>
+            <div class="field-wrap">
+              <mat-icon class="field-icon">tag</mat-icon>
+              <input
+                class="field-input"
+                type="text"
+                placeholder="BKG-0001"
+                [(ngModel)]="form.bookingId"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-field">
+            <label class="field-label">Car Model</label>
+            <div class="field-wrap">
+              <mat-icon class="field-icon">directions_car</mat-icon>
+              <input
+                class="field-input"
+                type="text"
+                placeholder="e.g. Mercedes S-Class"
+                [(ngModel)]="form.carName"
+              />
+            </div>
+          </div>
+          <div class="form-field">
+            <label class="field-label">Plate Number</label>
+            <div class="field-wrap">
+              <mat-icon class="field-icon">pin</mat-icon>
+              <input
+                class="field-input"
+                type="text"
+                placeholder="e.g. S-777-VIP"
+                [(ngModel)]="form.plate"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-field">
+            <label class="field-label">Pickup Date</label>
+            <div class="field-wrap">
+              <mat-icon class="field-icon">calendar_today</mat-icon>
+              <input
+                class="field-input"
+                type="text"
+                placeholder="12 Aug, 10:00"
+                [(ngModel)]="form.pickup"
+              />
+            </div>
+          </div>
+          <div class="form-field">
+            <label class="field-label">Return Date</label>
+            <div class="field-wrap">
+              <mat-icon class="field-icon">event_available</mat-icon>
+              <input
+                class="field-input"
+                type="text"
+                placeholder="15 Aug, 10:00"
+                [(ngModel)]="form.return"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-field">
+            <label class="field-label">Status</label>
+            <div class="field-wrap select-wrap">
+              <mat-icon class="field-icon">flag</mat-icon>
+              <select class="field-input field-select" [(ngModel)]="form.status">
+                <option *ngFor="let s of statusOptions" [value]="s">{{ s }}</option>
+              </select>
+              <mat-icon class="select-arrow">expand_more</mat-icon>
+            </div>
+          </div>
+          <div class="form-field">
+            <label class="field-label">Amount</label>
+            <div class="field-wrap">
+              <mat-icon class="field-icon">attach_money</mat-icon>
+              <input class="field-input" type="text" placeholder="$0" [(ngModel)]="form.amount" />
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Actions -->
+    <div class="dialog-actions">
+      <button class="act-secondary" (click)="onCancel()">
+        <mat-icon style="font-size: 16px; width: 16px; height: 16px">close</mat-icon>
+        Cancel
+      </button>
+      <button class="act-primary" [class.act-danger]="isDelete" (click)="onConfirm()">
+        <mat-icon style="font-size: 16px; width: 16px; height: 16px">{{ confirmIcon }}</mat-icon>
+        {{ confirmLabel }}
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,30 +1,90 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
+import { BookingDetailsComponent } from './bookings-dialog/booking-details.component';
+
+// ── Shared interface ──────────────────────────────────────────────────────────
+export interface Booking {
+  initials: string;
+  clientName: string;
+  bookingId: string;
+  carName: string;
+  plate: string;
+  pickup: string;
+  return: string;
+  status: 'Pending' | 'Confirmed' | 'Completed' | 'Cancelled';
+  amount: string;
+}
+
+export type DialogMode = 'new' | 'edit' | 'delete' | null;
 
 @Component({
   selector: 'app-bookings',
-  standalone: true,
-  imports: [CommonModule, MatIconModule],
+  imports: [CommonModule, MatIconModule, BookingDetailsComponent],
   templateUrl: './bookings.component.html',
   styleUrl: './bookings.component.scss',
 })
 export class BookingsComponent {
   currentFilter = 'All';
 
+  // Dialog state
+  dialogMode: DialogMode = null;
+  selectedBooking: Booking | null = null;
+
+  get filteredBookings(): Booking[] {
+    if (this.currentFilter === 'All') return this.mockBookings;
+    return this.mockBookings.filter((b) => b.status === this.currentFilter);
+  }
+
   setFilter(filter: string) {
     this.currentFilter = filter;
   }
 
-  get filteredBookings() {
-    if (this.currentFilter === 'All') return this.mockBookings;
-    return this.mockBookings.filter(b => b.status === this.currentFilter);
+  // ── Open helpers ──────────────────────────────────────────────────────────
+  openNewBooking() {
+    this.selectedBooking = null;
+    this.dialogMode = 'new';
   }
 
-  mockBookings = [
+  openEditBooking(booking: Booking) {
+    this.selectedBooking = { ...booking };
+    this.dialogMode = 'edit';
+  }
+
+  openDeleteBooking(booking: Booking) {
+    this.selectedBooking = { ...booking };
+    this.dialogMode = 'delete';
+  }
+
+  // ── Dialog event handlers ─────────────────────────────────────────────────
+  onDialogClose() {
+    this.dialogMode = null;
+    this.selectedBooking = null;
+  }
+
+  onDialogSave(booking: Booking) {
+    if (this.dialogMode === 'new') {
+      const names = booking.clientName.trim().split(' ');
+      booking.initials = (names[0]?.[0] ?? '').toUpperCase() + (names[1]?.[0] ?? '').toUpperCase();
+      this.mockBookings = [...this.mockBookings, booking];
+    }
+
+    if (this.dialogMode === 'edit') {
+      this.mockBookings = this.mockBookings.map((b) =>
+        b.bookingId === booking.bookingId ? { ...b, ...booking } : b,
+      );
+    }
+
+    if (this.dialogMode === 'delete') {
+      this.mockBookings = this.mockBookings.filter((b) => b.bookingId !== booking.bookingId);
+    }
+
+    this.onDialogClose();
+  }
+
+  mockBookings: Booking[] = [
     {
       initials: 'JD',
-      image: 'https://catalogue.automobile.tn/big/2025/11/47224.jpg?t=1',
       clientName: 'John Doe',
       bookingId: 'BKG-0012',
       carName: 'Mercedes S-Class',
@@ -36,7 +96,6 @@ export class BookingsComponent {
     },
     {
       initials: 'AS',
-      image: 'https://catalogue.automobile.tn/big/2025/11/47224.jpg?t=1',
       clientName: 'Alice Smith',
       bookingId: 'BKG-0013',
       carName: 'BMW X5',
@@ -48,7 +107,6 @@ export class BookingsComponent {
     },
     {
       initials: 'MJ',
-      image: 'https://catalogue.automobile.tn/big/2025/11/47224.jpg?t=1',
       clientName: 'Mike Johnson',
       bookingId: 'BKG-0014',
       carName: 'Audi A6',
@@ -60,7 +118,6 @@ export class BookingsComponent {
     },
     {
       initials: 'EK',
-      image: 'https://catalogue.automobile.tn/big/2025/11/47224.jpg?t=1',
       clientName: 'Emma King',
       bookingId: 'BKG-0015',
       carName: 'Porsche 911',
