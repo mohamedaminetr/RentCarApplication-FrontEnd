@@ -545,6 +545,12 @@ body {
   }
 }
 
+.row-btn-delete:hover {
+  border-color: rgba(240, 96, 96, 0.4) !important;
+  color: var(--red) !important;
+  background: rgba(240, 96, 96, 0.05) !important;
+}
+
 /* ─── CAR GRID ─── */
 .car-grid {
   display: grid;

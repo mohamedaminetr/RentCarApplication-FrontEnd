@@ -3,30 +3,13 @@
 
   <main class="main">
     <!-- TOPBAR -->
-    <header class="topbar">
-      <div class="topbar-left">
-        <span class="topbar-eyebrow">Vehicle Management</span>
-        <span class="topbar-title">Fleet</span>
-      </div>
-      <div class="topbar-right">
-        <div class="search-box">
-          <mat-icon
-            style="font-size: 16px; width: 16px; height: 16px; color: rgba(245, 240, 232, 0.4)"
-            >search</mat-icon
-          >
-          <input type="text" placeholder="Search vehicles..." [(ngModel)]="searchQuery" />
-        </div>
-        <div class="topbar-btn">
-          <mat-icon style="font-size: 18px; width: 18px; height: 18px">notifications</mat-icon>
-        </div>
-        <div class="topbar-btn logout-btn" (click)="logout()">
-          <mat-icon>logout</mat-icon>
-        </div>
-        @if (auth.user$ | async; as user) {
-          <img [src]="user.picture" [alt]="user.name ?? ''" class="topbar-avatar" alt="userName" />
-        }
-      </div>
-    </header>
+    <rentcar-topbar 
+      [title]="'Fleet'" 
+      eyebrow="Vehicle Management" 
+      searchPlaceholder="Search vehicles..."
+      [searchText]="searchQuery"
+      (searchChange)="searchQuery = $event"
+    ></rentcar-topbar>
 
     <div class="content">
       <!-- STATS -->

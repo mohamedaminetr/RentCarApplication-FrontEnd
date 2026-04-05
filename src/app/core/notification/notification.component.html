@@ -1,0 +1,44 @@
+<div class="notify-card" (click)="$event.stopPropagation()">
+  <div class="notify-header">
+    <div class="notify-title-group">
+      <span class="notify-title">Notifications</span>
+      <span class="notify-count">2 New</span>
+    </div>
+    <button class="mark-btn" (click)="markAllRead()">Mark all as read</button>
+  </div>
+
+  <div class="notify-list">
+    @for (notify of notifications; track notify.id) {
+      <div 
+        class="notify-item" 
+        [class.unread]="notify.unread"
+        (click)="markAsRead(notify.id)"
+      >
+        <div class="item-icon-wrapper" [class]="notify.type">
+          <mat-icon style="font-size: 16px; width: 16px; height: 16px;">{{ notify.icon }}</mat-icon>
+        </div>
+        <div class="item-content">
+          <div class="item-header">
+            <span class="item-title">{{ notify.title }}</span>
+            <span class="item-time">{{ notify.time }}</span>
+          </div>
+          <p class="item-message">{{ notify.message }}</p>
+        </div>
+        @if (notify.unread) {
+          <div class="unread-dot"></div>
+        }
+      </div>
+    }
+    
+    @if (notifications.length === 0) {
+      <div class="empty-notif">
+        <mat-icon style="font-size: 32px; width: 32px; height: 32px; color: rgba(212, 168, 67, 0.2);">notifications_none</mat-icon>
+        <p>No notifications yet</p>
+      </div>
+    }
+  </div>
+
+  <div class="notify-footer">
+    <span class="view-all">View all notifications</span>
+  </div>
+</div>

@@ -1,0 +1,201 @@
+$bg: #1a1710;
+$bg2: #211f18;
+$bg3: #272420;
+$border: rgba(245, 240, 232, 0.08);
+$border2: rgba(245, 240, 232, 0.14);
+$gold: #d4a843;
+$gold2: #e8c068;
+$text: #f5f0e8;
+$text2: rgba(245, 240, 232, 0.55);
+$text3: rgba(245, 240, 232, 0.3);
+$red: #f06060;
+$green: #6ddbb5;
+$blue: #6aaee8;
+$purple: #a9a4e8;
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin trans {
+  transition: all 0.15s ease-out;
+}
+
+@mixin mono {
+  font-family: 'Courier New', monospace;
+}
+
+.notify-card {
+  position: absolute;
+  top: 48px;
+  right: 0;
+  width: 320px;
+  background: $bg;
+  border: 0.5px solid $border2;
+  border-radius: 12px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  animation: slideIn 0.25s ease-out;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.notify-header {
+  padding: 14px 18px;
+  background: $bg2;
+  border-bottom: 0.5px solid $border;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.notify-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: $text;
+}
+
+.notify-count {
+  font-size: 10px;
+  color: $gold;
+  margin-left: 8px;
+  @include mono;
+}
+
+.mark-btn {
+  background: none;
+  border: none;
+  font-size: 10px;
+  color: $text3;
+  @include mono;
+  cursor: pointer;
+  @include trans;
+
+  &:hover {
+    color: $gold;
+  }
+}
+
+.notify-list {
+  max-height: 400px;
+  overflow-y: auto;
+
+  &::-webkit-scrollbar { width: 4px; }
+  &::-webkit-scrollbar-thumb { background: $border2; border-radius: 2px; }
+}
+
+.notify-item {
+  padding: 14px 18px;
+  border-bottom: 0.5px solid $border;
+  display: flex;
+  gap: 14px;
+  cursor: pointer;
+  @include trans;
+  position: relative;
+
+  &:last-child { border-bottom: none; }
+  
+  &:hover {
+    background: rgba(245, 240, 232, 0.03);
+  }
+
+  &.unread {
+    background: rgba(212, 168, 67, 0.04);
+    
+    &:hover {
+      background: rgba(212, 168, 67, 0.06);
+    }
+  }
+}
+
+.item-icon-wrapper {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  @include flex-center;
+  flex-shrink: 0;
+
+  &.success { background: rgba($green, 0.12); color: $green; }
+  &.warning { background: rgba($gold, 0.12); color: $gold; }
+  &.info { background: rgba($blue, 0.12); color: $blue; }
+  &.alert { background: rgba($red, 0.12); color: $red; }
+}
+
+.item-content { flex: 1; min-width: 0; }
+
+.item-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 3px;
+}
+
+.item-title {
+  font-size: 11px;
+  font-weight: 500;
+  color: $text;
+}
+
+.item-time {
+  font-size: 9px;
+  color: $text3;
+  @include mono;
+}
+
+.item-message {
+  font-size: 11px;
+  line-height: 1.4;
+  color: $text2;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.unread-dot {
+  position: absolute;
+  top: 14px;
+  right: 18px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: $gold;
+}
+
+.notify-footer {
+  padding: 12px;
+  background: $bg2;
+  @include flex-center;
+  border-top: 0.5px solid $border;
+}
+
+.view-all {
+  font-size: 10px;
+  color: $text3;
+  @include mono;
+  cursor: pointer;
+  @include trans;
+
+  &:hover { color: $text; }
+}
+
+.empty-notif {
+  padding: 40px;
+  @include flex-center;
+  flex-direction: column;
+  gap: 12px;
+  
+  p {
+    font-size: 11px;
+    color: $text3;
+    @include mono;
+    margin: 0;
+  }
+}

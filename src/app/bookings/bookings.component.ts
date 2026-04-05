@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { BookingDetailsComponent } from './bookings-dialog/booking-details.component';
+import { TopbarComponent } from '../core/topbar/topbar.component';
 
 // ── Shared interface ──────────────────────────────────────────────────────────
 export interface Booking {
@@ -20,7 +21,7 @@ export type DialogMode = 'new' | 'edit' | 'delete' | null;
 
 @Component({
   selector: 'app-bookings',
-  imports: [CommonModule, MatIconModule, BookingDetailsComponent],
+  imports: [CommonModule, MatIconModule, BookingDetailsComponent, TopbarComponent],
   templateUrl: './bookings.component.html',
   styleUrl: './bookings.component.scss',
 })

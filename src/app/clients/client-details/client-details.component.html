@@ -1,0 +1,309 @@
+<div class="overlay" (click)="onOverlayClick($event)">
+  <div class="popup" (click)="$event.stopPropagation()">
+    <!-- HEADER -->
+    <div class="popup-header">
+      <div class="avatar-lg" [class]="mode === 'add' ? 'av-teal' : client.avatarClass">
+        {{ mode === 'add' ? '+' : client.initials }}
+      </div>
+
+      <div class="header-info">
+        <div class="header-name" *ngIf="mode === 'view'">{{ client.name }}</div>
+        <div class="header-name" *ngIf="mode !== 'view'">
+          {{ mode === 'add' ? 'Add New Client' : 'Update Client' }}
+        </div>
+
+        <div class="header-email" *ngIf="mode === 'view'">{{ client.email }}</div>
+
+        <div class="header-badges" *ngIf="mode === 'view'">
+          <span class="badge badge-vip" *ngIf="client.status === 'vip'">
+            <span class="badge-dot"></span>VIP
+          </span>
+          <span
+            class="badge"
+            [class.badge-active]="client.status === 'active' || client.status === 'vip'"
+            [class.badge-inactive]="client.status === 'inactive'"
+          >
+            <span class="badge-dot"></span>
+            {{ client.status === 'vip' ? 'Active' : (client.status | titlecase) }}
+          </span>
+          <span class="badge badge-since">Since Jan 2022</span>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <!-- Edit/Delete only in view mode -->
+        @if (mode === 'view') {
+          <div class="btn-icon" title="Edit" (click)="onEdit()">
+            <mat-icon style="font-size: 14px; width: 14px; height: 14px">edit</mat-icon>
+          </div>
+        }
+
+        <div class="close-btn" title="Close" (click)="onClose()">
+          <mat-icon style="font-size: 16px; width: 16px; height: 16px">close</mat-icon>
+        </div>
+      </div>
+    </div>
+
+    <!-- DELETE CONFIRMATION BANNER -->
+    @if (isConfirming) {
+      <div class="delete-banner">
+        <mat-icon style="font-size: 16px; width: 16px; height: 16px">warning_amber</mat-icon>
+        <span class="banner-text">Permanently delete this client and all associated data?</span>
+        <div class="banner-btns">
+          <button class="btn-banner-cancel" (click)="onCancelDelete()">Cancel</button>
+          <button class="btn-banner-confirm" (click)="onDelete()">Confirm Delete</button>
+        </div>
+      </div>
+    }
+
+    <!-- TABS (Only in View Mode) -->
+    @if (mode === 'view') {
+      <div class="tab-row">
+        <div class="tab" [class.active]="activeTab === 'overview'" (click)="activeTab = 'overview'">
+          Overview
+        </div>
+        <div class="tab" [class.active]="activeTab === 'rentals'" (click)="activeTab = 'rentals'">
+          Rentals
+        </div>
+        <div class="tab" [class.active]="activeTab === 'notes'" (click)="activeTab = 'notes'">
+          Notes
+        </div>
+      </div>
+    }
+
+    <!-- CONTENT AREA -->
+    <div class="popup-body-wrapper">
+      <!-- VIEW MODE CONTENT -->
+      @if (mode === 'view') {
+        <!-- TAB: OVERVIEW -->
+        @if (activeTab === 'overview') {
+          <div class="popup-body">
+            <!-- METRICS -->
+            <div class="metrics-row">
+              <div class="metric-card">
+                <div class="metric-label">Total Spent</div>
+                <div class="metric-value gold">{{ formatCurrency(client.totalSpent) }}</div>
+                <div class="metric-sub">↑ 14% vs last yr</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Rentals</div>
+                <div class="metric-value">{{ client.rentals }}</div>
+                <div class="metric-sub">Lifetime total</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Avg. per rental</div>
+                <div class="metric-value">{{ formatCurrency(avgPerRental) }}</div>
+                <div class="metric-sub">Above avg.</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Last rental</div>
+                <div class="metric-value sm">Mar 22</div>
+                <div class="metric-sub">12 days ago</div>
+              </div>
+            </div>
+
+            <!-- CONTACT -->
+            <div class="section">
+              <div class="section-header">
+                <span class="section-title">Contact</span>
+                <span class="section-action" (click)="onEdit()">Edit</span>
+              </div>
+              <div class="contact-grid">
+                <div class="contact-row">
+                  <div class="contact-icon">
+                    <mat-icon
+                      style="
+                        font-size: 14px;
+                        width: 14px;
+                        height: 14px;
+                        color: rgba(245, 240, 232, 0.3);
+                      "
+                      >phone</mat-icon
+                    >
+                  </div>
+                  <div>
+                    <div class="contact-label">Phone</div>
+                    <div class="contact-value">{{ client.phone }}</div>
+                  </div>
+                </div>
+                <div class="contact-row">
+                  <div class="contact-icon">
+                    <mat-icon
+                      style="
+                        font-size: 14px;
+                        width: 14px;
+                        height: 14px;
+                        color: rgba(245, 240, 232, 0.3);
+                      "
+                      >mail_outline</mat-icon
+                    >
+                  </div>
+                  <div>
+                    <div class="contact-label">Email</div>
+                    <div class="contact-value">{{ client.email }}</div>
+                  </div>
+                </div>
+                <div class="contact-row">
+                  <div class="contact-icon">
+                    <mat-icon
+                      style="
+                        font-size: 14px;
+                        width: 14px;
+                        height: 14px;
+                        color: rgba(245, 240, 232, 0.3);
+                      "
+                      >location_on</mat-icon
+                    >
+                  </div>
+                  <div>
+                    <div class="contact-label">Location</div>
+                    <div class="contact-value">Tunis, Tunisia</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- SPEND BREAKDOWN -->
+            <div class="section">
+              <div class="section-header">
+                <span class="section-title">Spend breakdown</span>
+              </div>
+              <div class="spend-bar-section">
+                @for (seg of spendSegments; track seg.label) {
+                  <div class="spend-row">
+                    <span class="spend-label">{{ seg.label }}</span>
+                    <span class="spend-val">{{ formatCurrency(seg.amount) }}</span>
+                  </div>
+                  <div class="bar-track">
+                    <div class="bar-fill" [style.width.%]="seg.pct"></div>
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+        }
+
+        <!-- TAB: RENTALS -->
+        @if (activeTab === 'rentals') {
+          <div class="tab-content">
+            <div class="section">
+              <div class="rentals-list">
+                @for (rental of recentRentals; track rental.car) {
+                  <div class="rental-item">
+                    <div class="rental-dot" [class]="rental.dotClass"></div>
+                    <div class="rental-main">
+                      <div class="rental-car">{{ rental.car }}</div>
+                      <div class="rental-date">{{ rental.dates }}</div>
+                    </div>
+                    <div class="rental-right">
+                      <div class="rental-amount">{{ formatCurrency(rental.amount) }}</div>
+                      <div class="rental-days">{{ rental.days }} days</div>
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+        }
+
+        <!-- TAB: NOTES -->
+        @if (activeTab === 'notes') {
+          <div class="tab-content">
+            <div class="section">
+              <div class="section-header">
+                <span class="section-title">Agent notes</span>
+                <span class="section-action">+ Add</span>
+              </div>
+              <div class="notes-body">
+                <div class="notes-text">
+                  "Prefers luxury or SUV class vehicles. Always requests GPS and infant seat..."
+                </div>
+                <span class="notes-tag">Added by Sami · Feb 14</span>
+              </div>
+            </div>
+          </div>
+        }
+      }
+
+      <!-- EDIT / ADD MODE FORM -->
+      @else {
+        <div class="form-body">
+          <div class="form-grid">
+            <div class="form-group full">
+              <label>Full Name</label>
+              <input type="text" [(ngModel)]="formData.name" placeholder="Enter client name" />
+            </div>
+
+            <div class="form-group">
+              <label>Email Address</label>
+              <input type="email" [(ngModel)]="formData.email" placeholder="client@email.com" />
+            </div>
+
+            <div class="form-group">
+              <label>Phone Number</label>
+              <input type="text" [(ngModel)]="formData.phone" placeholder="+216 -- --- ---" />
+            </div>
+
+            <div class="form-group">
+              <label>Status</label>
+              <select [(ngModel)]="formData.status" class="dark-select">
+                <option value="active">Active</option>
+                <option value="vip">VIP</option>
+                <option value="inactive">Inactive</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Avatar Color</label>
+              <div class="color-picker">
+                <div
+                  class="color-opt av-gold"
+                  [class.active]="formData.avatarClass === 'av-gold'"
+                  (click)="formData.avatarClass = 'av-gold'"
+                ></div>
+                <div
+                  class="color-opt av-teal"
+                  [class.active]="formData.avatarClass === 'av-teal'"
+                  (click)="formData.avatarClass = 'av-teal'"
+                ></div>
+                <div
+                  class="color-opt av-blue"
+                  [class.active]="formData.avatarClass === 'av-blue'"
+                  (click)="formData.avatarClass = 'av-blue'"
+                ></div>
+                <div
+                  class="color-opt av-purple"
+                  [class.active]="formData.avatarClass === 'av-purple'"
+                  (click)="formData.avatarClass = 'av-purple'"
+                ></div>
+                <div
+                  class="color-opt av-red"
+                  [class.active]="formData.avatarClass === 'av-red'"
+                  (click)="formData.avatarClass = 'av-red'"
+                ></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- FOOTER -->
+    <div class="popup-footer">
+      @if (mode === 'view') {
+        <span class="footer-meta">Client ID · #CLT-00847 · Added Jan 12, 2022</span>
+        <div class="footer-btns">
+          <button class="btn-secondary" (click)="onMessage()">Message</button>
+          <button class="btn-primary" (click)="onNewRental()">New Rental</button>
+        </div>
+      } @else {
+        <div class="footer-btns-end">
+          <button class="btn-secondary" (click)="onCancelEdit()">Cancel</button>
+          <button class="btn-primary" (click)="onSave()">
+            {{ mode === 'add' ? 'Create Client' : 'Save Changes' }}
+          </button>
+        </div>
+      }
+    </div>
+  </div>
+</div>

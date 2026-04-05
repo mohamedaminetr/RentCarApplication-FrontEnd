@@ -3,12 +3,13 @@ import { CommonModule, TitleCasePipe } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '@auth0/auth0-angular';
 import { MatIcon } from '@angular/material/icon';
+import { TopbarComponent } from '../core/topbar/topbar.component';
 
 @Component({
   selector: 'rentcar-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
-  imports: [CommonModule, RouterModule, TitleCasePipe, MatIcon],
+  imports: [CommonModule, RouterModule, TitleCasePipe, MatIcon, TopbarComponent],
 })
 export class HomeComponent {
   public x: number = 0;
@@ -54,6 +55,6 @@ export class HomeComponent {
   ) {}
 
   public logout(): void {
-    this.auth.logout({ logoutParams: { returnTo: window.location.origin } });
+    // Logout logic is now handled in TopbarComponent
   }
 }

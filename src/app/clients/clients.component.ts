@@ -4,6 +4,8 @@ import { Router } from '@angular/router';
 import { AuthService } from '@auth0/auth0-angular';
 import { FormsModule } from '@angular/forms';
 import { MatIcon } from '@angular/material/icon';
+import { ClientDetailsComponent } from './client-details/client-details.component';
+import { TopbarComponent } from '../core/topbar/topbar.component';
 
 export interface Client {
   initials: string;
@@ -20,7 +22,14 @@ export interface Client {
   selector: 'rentcar-clients',
   templateUrl: './clients.component.html',
   styleUrls: ['./clients.component.scss'],
-  imports: [CommonModule, FormsModule, TitleCasePipe, MatIcon],
+  imports: [
+    CommonModule,
+    FormsModule,
+    TitleCasePipe,
+    MatIcon,
+    ClientDetailsComponent,
+    TopbarComponent,
+  ],
 })
 export class ClientsComponent {
   searchQuery = '';
@@ -28,6 +37,64 @@ export class ClientsComponent {
   currentPage = 1;
   pages = [1, 2, 3];
   miniBarHeights = [30, 20, 36, 24, 40, 28, 48];
+
+  // ── Client Details ────────────────────────────────────────────
+  selectedClient: Client | null = null;
+  viewMode: 'view' | 'edit' | 'add' = 'view';
+  isDeleting = false;
+
+  openDetails(client: Client, mode: 'view' | 'edit' = 'view', isDeletion = false): void {
+    this.selectedClient = { ...client };
+    this.viewMode = mode;
+    this.isDeleting = isDeletion;
+  }
+
+  openAddClient(): void {
+    this.selectedClient = {
+      initials: '',
+      name: '',
+      email: '',
+      phone: '',
+      rentals: 0,
+      totalSpent: 0,
+      status: 'active',
+      avatarClass: 'av-teal',
+    };
+    this.viewMode = 'add';
+  }
+
+  closeDetails(): void {
+    this.selectedClient = null;
+    this.isDeleting = false;
+  }
+
+  onAddClient(client: Client): void {
+    this.allClients.unshift(client);
+    this.closeDetails();
+  }
+
+  onUpdateClient(client: Client): void {
+    const idx = this.allClients.findIndex((c) => c.email === client.email);
+    if (idx !== -1) {
+      this.allClients[idx] = client;
+    }
+    this.closeDetails();
+  }
+
+  onDeleteClient(client: Client): void {
+    this.allClients = this.allClients.filter((c) => c.email !== client.email);
+    this.closeDetails();
+  }
+
+  onNewRental(client: Client): void {
+    this.closeDetails();
+    this.selectedClient = null;
+  }
+
+  onMessage(client: Client): void {
+    // hook up your messaging flow here
+  }
+  // ─────────────────────────────────────────────────────────────
 
   stats = [
     { label: 'Total Clients', value: '142', change: '↑ 12 this month', up: true },
@@ -134,6 +201,6 @@ export class ClientsComponent {
   }
 
   logout(): void {
-    this.auth.logout({ logoutParams: { returnTo: window.location.origin } });
+    // Logout logic is now handled in TopbarComponent
   }
 }

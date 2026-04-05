@@ -4,27 +4,13 @@
   <!-- MAIN -->
   <main class="main">
     <!-- TOPBAR -->
-    <header class="topbar">
-      <div class="topbar-left">
-        <span class="topbar-eyebrow">Client Management</span>
-        <span class="topbar-title">Clients</span>
-      </div>
-      <div class="topbar-right">
-        <div class="search-box">
-          <mat-icon style="font-size: 14px; width: 14px; height: 14px; color: rgba(245,240,232,0.4)">search</mat-icon>
-          <input type="text" placeholder="Search clients..." [(ngModel)]="searchQuery" />
-        </div>
-        <div class="topbar-btn">
-          <mat-icon style="font-size: 16px; width: 16px; height: 16px;">notifications</mat-icon>
-        </div>
-        <div class="topbar-btn logout-btn" (click)="logout()">
-          <mat-icon>logout</mat-icon>
-        </div>
-        @if (auth.user$ | async; as user) {
-          <img [src]="user.picture" [alt]="user.name" class="topbar-avatar" alt="" />
-        }
-      </div>
-    </header>
+    <rentcar-topbar
+      [title]="'Clients'"
+      eyebrow="Client Management"
+      searchPlaceholder="Search clients..."
+      [searchText]="searchQuery"
+      (searchChange)="searchQuery = $event"
+    ></rentcar-topbar>
 
     <!-- CONTENT -->
     <div class="content">
@@ -73,8 +59,8 @@
             Inactive (19)
           </button>
         </div>
-        <button class="add-btn">
-          <mat-icon style="font-size: 14px; width: 14px; height: 14px;">add</mat-icon>
+        <button class="add-btn" (click)="openAddClient()">
+          <mat-icon style="font-size: 14px; width: 14px; height: 14px">add</mat-icon>
           Add Client
         </button>
       </div>
@@ -101,13 +87,9 @@
                 </div>
               </div>
             </div>
-
             <div class="td td-muted">{{ client.phone }}</div>
-
             <div class="td td-muted">{{ client.rentals }} rentals</div>
-
             <div class="td td-amount">{{ formatCurrency(client.totalSpent) }}</div>
-
             <div class="td">
               <span
                 class="badge"
@@ -118,14 +100,22 @@
                 {{ client.status === 'vip' ? 'VIP' : (client.status | titlecase) }}
               </span>
             </div>
-
             <div class="td">
               <div class="row-actions">
-                <div class="row-btn" title="Edit">
-                  <mat-icon style="font-size: 14px; width: 14px; height: 14px;">edit</mat-icon>
+                <div class="row-btn" title="Edit" (click)="openDetails(client, 'edit')">
+                  <mat-icon style="font-size: 14px; width: 14px; height: 14px">edit</mat-icon>
                 </div>
-                <div class="row-btn" title="View">
-                  <mat-icon style="font-size: 14px; width: 14px; height: 14px;">visibility</mat-icon>
+                <div class="row-btn" title="View" (click)="openDetails(client)">
+                  <mat-icon style="font-size: 14px; width: 14px; height: 14px">visibility</mat-icon>
+                </div>
+                <div
+                  class="row-btn row-btn-delete"
+                  title="Delete"
+                  (click)="openDetails(client, 'view', true)"
+                >
+                  <mat-icon style="font-size: 14px; width: 14px; height: 14px"
+                    >delete_outline</mat-icon
+                  >
                 </div>
               </div>
             </div>
@@ -134,14 +124,17 @@
 
         @if (filteredClients.length === 0) {
           <div class="empty-state">
-            <mat-icon style="font-size: 32px; width: 32px; height: 32px; color: rgba(212,168,67,0.3);">people</mat-icon>
+            <mat-icon
+              style="font-size: 32px; width: 32px; height: 32px; color: rgba(212, 168, 67, 0.3)"
+              >people</mat-icon
+            >
             <p>No clients match your search</p>
           </div>
         }
 
         <!-- PAGINATION -->
         <div class="pagination">
-          <span class="page-info"> Showing {{ filteredClients.length }} of 142 clients </span>
+          <span class="page-info">Showing {{ filteredClients.length }} of 142 clients</span>
           <div class="page-btns">
             <div class="page-btn">‹</div>
             @for (page of pages; track page) {
@@ -169,7 +162,6 @@
             </div>
             <span class="panel-action">View All</span>
           </div>
-
           @for (client of topClients; track client.email; let i = $index) {
             <div class="top-client">
               <div class="tc-rank" [class.gold-rank]="i === 0">{{ i + 1 }}</div>
@@ -193,7 +185,6 @@
               <div class="panel-title-main">Client Segments</div>
             </div>
           </div>
-
           <div class="seg-list">
             @for (seg of segments; track seg.label) {
               <div class="seg-item">
@@ -207,7 +198,6 @@
               </div>
             }
           </div>
-
           <div class="acquisition">
             <div class="acq-header">
               <div>
@@ -226,4 +216,19 @@
       </div>
     </div>
   </main>
+
+  <!-- CLIENT DETAILS POPUP — rendered only when a client is selected -->
+  @if (selectedClient) {
+    <rentcar-client-details
+      [client]="selectedClient"
+      [mode]="viewMode"
+      [isConfirming]="isDeleting"
+      (close)="closeDetails()"
+      (addClient)="onAddClient($event)"
+      (updateClient)="onUpdateClient($event)"
+      (deleteClient)="onDeleteClient($event)"
+      (newRental)="onNewRental($event)"
+      (messageClient)="onMessage($event)"
+    />
+  }
 </div>

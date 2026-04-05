@@ -1,0 +1,40 @@
+<header class="topbar">
+  <div class="topbar-left">
+    <span class="topbar-eyebrow">{{ eyebrow }}</span>
+    <span class="topbar-title">{{ title }}</span>
+  </div>
+  <div class="topbar-right">
+    <div class="search-box">
+      <mat-icon style="font-size: 14px; width: 14px; height: 14px; color: rgba(245, 240, 232, 0.4)">search</mat-icon>
+      <input 
+        type="text" 
+        [placeholder]="searchPlaceholder" 
+        [(ngModel)]="searchText"
+        (ngModelChange)="onSearch($event)"
+      />
+    </div>
+
+    <!-- Notification Button and Popup -->
+    <div class="topbar-btn-wrapper">
+      <div 
+        class="topbar-btn" 
+        [class.active]="isNotificationOpen" 
+        (click)="toggleNotifications(); $event.stopPropagation()"
+      >
+        <mat-icon style="font-size: 16px; width: 16px; height: 16px">notifications</mat-icon>
+        <div class="notif-dot"></div>
+      </div>
+      
+      @if (isNotificationOpen) {
+        <rentcar-notification (close)="closeNotifications()" />
+      }
+    </div>
+
+    <div class="topbar-btn logout-btn" (click)="logout()">
+      <mat-icon>logout</mat-icon>
+    </div>
+    @if (auth.user$ | async; as user) {
+      <img [src]="user.picture" [alt]="user.name" class="topbar-avatar" />
+    }
+  </div>
+</header>

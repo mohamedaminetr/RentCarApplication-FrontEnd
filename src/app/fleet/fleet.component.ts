@@ -6,6 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from '@auth0/auth0-angular';
 import { AddVehicleComponent } from './add-vehicle/add-vehicle.component';
 import { VehicleDetailsComponent } from './vehicle-details/vehicle-details.component';
+import { TopbarComponent } from '../core/topbar/topbar.component';
 
 export type VehicleStatus = 'available' | 'rented' | 'service';
 
@@ -29,7 +30,15 @@ export interface Vehicle {
   selector: 'rentcar-fleet',
   templateUrl: './fleet.component.html',
   styleUrls: ['./fleet.component.scss'],
-  imports: [CommonModule, FormsModule, MatIconModule, TitleCasePipe, AddVehicleComponent, VehicleDetailsComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatIconModule,
+    TitleCasePipe,
+    AddVehicleComponent,
+    VehicleDetailsComponent,
+    TopbarComponent,
+  ],
 })
 export class FleetComponent {
   searchQuery = '';
@@ -203,6 +212,6 @@ export class FleetComponent {
     return 'View Service';
   }
   public logout(): void {
-    this.auth.logout({ logoutParams: { returnTo: window.location.origin } });
+    // Logout logic is now handled in TopbarComponent
   }
 }

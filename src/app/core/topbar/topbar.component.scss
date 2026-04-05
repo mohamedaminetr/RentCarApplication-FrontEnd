@@ -1,0 +1,134 @@
+.topbar {
+  height: 64px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2.5rem;
+  border-bottom: 1px solid var(--gold-line);
+  background: rgba(13, 11, 7, 0.95);
+}
+
+.topbar-left {
+  display: flex;
+  flex-direction: column;
+}
+
+.topbar-eyebrow {
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: rgba(245, 240, 232, 0.55);
+  text-transform: uppercase;
+}
+
+.topbar-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-weight: 300;
+  color: var(--text);
+  letter-spacing: 1px;
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface2);
+  border: 1px solid var(--gold-line);
+  padding: 0 14px;
+  height: 36px;
+  width: 220px;
+  transition: border-color 0.2s;
+
+  &:focus-within {
+    border-color: rgba(212, 168, 67, 0.4);
+  }
+
+  input {
+    background: transparent;
+    border: none;
+    outline: none;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: var(--text);
+    width: 100%;
+    &::placeholder {
+      color: rgba(245, 240, 232, 0.3);
+    }
+  }
+}
+
+.topbar-btn-wrapper {
+  position: relative;
+}
+
+.topbar-btn {
+  width: 36px;
+  height: 36px;
+  background: var(--surface2);
+  border: 1px solid var(--gold-line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: rgba(245, 240, 232, 0.6);
+  position: relative;
+
+  &:hover, &.active {
+    border-color: rgba(212, 168, 67, 0.4);
+    color: var(--gold);
+    background: rgba(212, 168, 67, 0.05);
+  }
+
+  .notif-dot {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 6px;
+    height: 6px;
+    background: var(--gold);
+    border-radius: 50%;
+    border: 1.5px solid #0d0b07;
+  }
+}
+
+.topbar-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(212, 168, 67, 0.35);
+  object-fit: cover;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .topbar {
+    padding: 0 1rem;
+    height: 56px;
+    gap: 8px;
+  }
+  .topbar-title {
+    font-size: 18px;
+  }
+  .search-box {
+    width: 140px;
+  }
+}
+
+@media (max-width: 480px) {
+  .topbar-right {
+    gap: 6px;
+  }
+  .search-box {
+    width: 120px;
+    padding: 0 10px;
+  }
+}

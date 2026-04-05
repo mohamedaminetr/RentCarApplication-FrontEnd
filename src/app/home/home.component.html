@@ -4,24 +4,10 @@
   <!-- MAIN -->
   <main class="main">
     <!-- TOPBAR -->
-    <header class="topbar">
-      <div class="topbar-left">
-        <span class="topbar-greeting">{{ today }}</span>
-        @if (auth.user$ | async; as user) {
-          <span class="topbar-title">Good morning, {{ user.given_name ?? user.name }}</span>
-        }
-      </div>
-      <div class="topbar-right">
-        <div class="topbar-btn notif-wrap">
-          <mat-icon style="font-size: 16px; width: 16px; height: 16px;">notifications</mat-icon>
-          <div class="notif-dot"></div>
-        </div>
-        <div class="topbar-btn" (click)="logout()"><mat-icon>logout</mat-icon></div>
-        @if (auth.user$ | async; as user) {
-          <img [src]="user.picture" [alt]="user.name" class="topbar-avatar" alt="" />
-        }
-      </div>
-    </header>
+    <rentcar-topbar
+      [title]="'Good morning, ' + ((auth.user$ | async)?.given_name ?? (auth.user$ | async)?.name)"
+      [eyebrow]="today"
+    ></rentcar-topbar>
 
     <!-- CONTENT -->
     <div class="content">
@@ -125,7 +111,9 @@
             @for (car of fleet; track car.plate) {
               <div class="fleet-item">
                 <div class="fleet-car-icon">
-                  <mat-icon style="font-size: 22px; width: 22px; height: 22px; color: #c9a84c;">directions_car</mat-icon>
+                  <mat-icon style="font-size: 22px; width: 22px; height: 22px; color: #c9a84c"
+                    >directions_car</mat-icon
+                  >
                 </div>
                 <div class="fleet-info">
                   <div class="fleet-name">{{ car.name }}</div>
@@ -174,7 +162,12 @@
           <div class="actions-grid">
             @for (action of quickActions; track action.title) {
               <div class="action-btn" (click)="router.navigate([action.route])">
-              <div class="action-icon"><mat-icon style="font-size: 18px; width: 18px; height: 18px; color: var(--gold);">{{ action.icon }}</mat-icon></div>
+                <div class="action-icon">
+                  <mat-icon
+                    style="font-size: 18px; width: 18px; height: 18px; color: var(--gold)"
+                    >{{ action.icon }}</mat-icon
+                  >
+                </div>
                 <div class="action-label">{{ action.label }}</div>
                 <div class="action-title">{{ action.title }}</div>
               </div>
