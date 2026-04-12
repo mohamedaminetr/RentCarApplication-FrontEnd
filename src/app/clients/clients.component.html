@@ -5,18 +5,18 @@
   <main class="main">
     <!-- TOPBAR -->
     <rentcar-topbar
-      [title]="'Clients'"
+      title="Clients"
       eyebrow="Client Management"
       searchPlaceholder="Search clients..."
-      [searchText]="searchQuery"
-      (searchChange)="searchQuery = $event"
+      [searchText]="searchQuery()"
+      (searchChange)="searchQuery.set($event)"
     ></rentcar-topbar>
 
     <!-- CONTENT -->
     <div class="content">
       <!-- STATS -->
       <div class="stats-grid">
-        @for (stat of stats; track stat.label) {
+        @for (stat of stats(); track stat.label) {
           <div class="stat-card">
             <div class="stat-label">{{ stat.label }}</div>
             <div class="stat-value">{{ stat.value }}</div>
@@ -32,31 +32,31 @@
         <div class="toolbar-left">
           <button
             class="filter-btn"
-            [class.active]="activeFilter === 'all'"
-            (click)="setFilter('all')"
+            [class.active]="activeFilter() === 'all'"
+            (click)="activeFilter.set('all')"
           >
-            All (142)
+            All
           </button>
           <button
             class="filter-btn"
-            [class.active]="activeFilter === 'vip'"
-            (click)="setFilter('vip')"
+            [class.active]="activeFilter() === 'vip'"
+            (click)="activeFilter.set('vip')"
           >
-            VIP (28)
+            VIP
           </button>
           <button
             class="filter-btn"
-            [class.active]="activeFilter === 'active'"
-            (click)="setFilter('active')"
+            [class.active]="activeFilter() === 'active'"
+            (click)="activeFilter.set('active')"
           >
-            Active (115)
+            Active
           </button>
           <button
             class="filter-btn"
-            [class.active]="activeFilter === 'inactive'"
-            (click)="setFilter('inactive')"
+            [class.active]="activeFilter() === 'inactive'"
+            (click)="activeFilter.set('inactive')"
           >
-            Inactive (19)
+            Inactive
           </button>
         </div>
         <button class="add-btn" (click)="openAddClient()">
@@ -76,67 +76,73 @@
           <div class="th"></div>
         </div>
 
-        @for (client of filteredClients; track client.email) {
-          <div class="client-row">
-            <div class="td">
-              <div class="client-info">
-                <div class="avatar" [class]="client.avatarClass">{{ client.initials }}</div>
-                <div>
-                  <div class="client-name">{{ client.name }}</div>
-                  <div class="client-email">{{ client.email }}</div>
+        @if (isLoading()) {
+          <div class="loading-state">Loading clients...</div>
+        } @else {
+          @for (client of filteredClients(); track client.email) {
+            <div class="client-row">
+              <div class="td">
+                <div class="client-info">
+                  <div class="avatar" [class]="client.avatarClass">{{ client.initials }}</div>
+                  <div>
+                    <div class="client-name">{{ client.name }}</div>
+                    <div class="client-email">{{ client.email }}</div>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div class="td td-muted">{{ client.phone }}</div>
-            <div class="td td-muted">{{ client.rentals }} rentals</div>
-            <div class="td td-amount">{{ formatCurrency(client.totalSpent) }}</div>
-            <div class="td">
-              <span
-                class="badge"
-                [class.badge-vip]="client.status === 'vip'"
-                [class.badge-active]="client.status === 'active'"
-                [class.badge-inactive]="client.status === 'inactive'"
-              >
-                {{ client.status === 'vip' ? 'VIP' : (client.status | titlecase) }}
-              </span>
-            </div>
-            <div class="td">
-              <div class="row-actions">
-                <div class="row-btn" title="Edit" (click)="openDetails(client, 'edit')">
-                  <mat-icon style="font-size: 14px; width: 14px; height: 14px">edit</mat-icon>
-                </div>
-                <div class="row-btn" title="View" (click)="openDetails(client)">
-                  <mat-icon style="font-size: 14px; width: 14px; height: 14px">visibility</mat-icon>
-                </div>
-                <div
-                  class="row-btn row-btn-delete"
-                  title="Delete"
-                  (click)="openDetails(client, 'view', true)"
+              <div class="td td-muted">{{ client.phone }}</div>
+              <div class="td td-muted">{{ client.rentals }} rentals</div>
+              <div class="td td-amount">{{ formatCurrency(client.totalSpent) }}</div>
+              <div class="td">
+                <span
+                  class="badge"
+                  [class.badge-vip]="client.status === 'vip'"
+                  [class.badge-active]="client.status === 'active'"
+                  [class.badge-inactive]="client.status === 'inactive'"
                 >
-                  <mat-icon style="font-size: 14px; width: 14px; height: 14px"
-                    >delete_outline</mat-icon
+                  {{ client.status === 'vip' ? 'VIP' : (client.status | titlecase) }}
+                </span>
+              </div>
+              <div class="td">
+                <div class="row-actions">
+                  <div class="row-btn" title="Edit" (click)="openDetails(client, 'edit')">
+                    <mat-icon style="font-size: 14px; width: 14px; height: 14px">edit</mat-icon>
+                  </div>
+                  <div class="row-btn" title="View" (click)="openDetails(client)">
+                    <mat-icon style="font-size: 14px; width: 14px; height: 14px"
+                      >visibility</mat-icon
+                    >
+                  </div>
+                  <div
+                    class="row-btn row-btn-delete"
+                    title="Delete"
+                    (click)="openDetails(client, 'view', true)"
                   >
+                    <mat-icon style="font-size: 14px; width: 14px; height: 14px"
+                      >delete_outline</mat-icon
+                    >
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        }
+          }
 
-        @if (filteredClients.length === 0) {
-          <div class="empty-state">
-            <mat-icon
-              style="font-size: 32px; width: 32px; height: 32px; color: rgba(212, 168, 67, 0.3)"
-              >people</mat-icon
-            >
-            <p>No clients match your search</p>
-          </div>
+          @if (filteredClients().length === 0) {
+            <div class="empty-state">
+              <mat-icon
+                style="font-size: 32px; width: 32px; height: 32px; color: rgba(212, 168, 67, 0.3)"
+                >people</mat-icon
+              >
+              <p>No clients match your search</p>
+            </div>
+          }
         }
 
         <!-- PAGINATION -->
         <div class="pagination">
-          <span class="page-info">Showing {{ filteredClients.length }} of 142 clients</span>
+          <span class="page-info">Showing {{ filteredClients().length }} clients</span>
           <div class="page-btns">
-            <div class="page-btn">‹</div>
+            <!-- <div class="page-btn">‹</div>
             @for (page of pages; track page) {
               <div
                 class="page-btn"
@@ -146,7 +152,7 @@
                 {{ page }}
               </div>
             }
-            <div class="page-btn">›</div>
+            <div class="page-btn">›</div> -->
           </div>
         </div>
       </div>
@@ -186,7 +192,7 @@
             </div>
           </div>
           <div class="seg-list">
-            @for (seg of segments; track seg.label) {
+            @for (seg of segments(); track seg.label) {
               <div class="seg-item">
                 <div class="seg-header">
                   <span class="seg-label">{{ seg.label }}</span>

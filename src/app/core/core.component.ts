@@ -1,7 +1,7 @@
 import { CommonModule, AsyncPipe } from '@angular/common';
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
-import { AuthService } from '@auth0/auth0-angular';
+import { AppAuthService } from '../services/auth.service';
 import { MatIconModule } from '@angular/material/icon';
 import { filter } from 'rxjs/operators';
 
@@ -9,14 +9,14 @@ import { filter } from 'rxjs/operators';
   selector: 'rentcar-homepage',
   templateUrl: './core.component.html',
   styleUrl: './core.component.scss',
-  imports: [RouterOutlet, CommonModule, AsyncPipe, MatIconModule],
+  imports: [RouterOutlet, CommonModule, MatIconModule],
 })
 export class CoreComponent implements OnInit {
   public path = '';
 
   public navItems = [
     { id: 'home', label: 'Dashboard', route: '/home', badge: null, icon: 'dashboard' },
-    { id: 'fleet', label: 'Fleet', route: '/fleet', badge: '24', icon: 'directions_car' },
+    { id: 'vehicles', label: 'Vehicles', route: '/vehicles', badge: '24', icon: 'directions_car' },
     { id: 'bookings', label: 'Bookings', route: '/bookings', badge: '7', icon: 'receipt_long' },
     { id: 'clients', label: 'Clients', route: '/clients', badge: '142', icon: 'group' },
     { id: 'revenue', label: 'Revenue', route: '/revenue', badge: null, icon: 'payments' },
@@ -24,12 +24,10 @@ export class CoreComponent implements OnInit {
     { id: 'settings', label: 'Settings', route: '/settings', badge: null, icon: 'settings' },
   ];
 
-  constructor(
-    @Inject(AuthService) public auth: AuthService,
-    public router: Router,
-  ) {}
+  public auth = inject(AppAuthService);
+  public router = inject(Router);
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     this.path = this.router.url;
     this.router.events
       .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
@@ -38,13 +36,13 @@ export class CoreComponent implements OnInit {
       });
   }
 
-  isMobileMenuOpen = false;
+  public isMobileMenuOpen = false;
 
-  toggleMobileMenu() {
+  public toggleMobileMenu(): void {
     this.isMobileMenuOpen = !this.isMobileMenuOpen;
   }
 
-  closeMobileMenu() {
+  public closeMobileMenu(): void {
     this.isMobileMenuOpen = false;
   }
 
@@ -59,6 +57,4 @@ export class CoreComponent implements OnInit {
   public isSelected(path: string): boolean {
     return this.path === path || this.path.startsWith(path + '/');
   }
-
-
 }

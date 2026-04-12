@@ -13,36 +13,36 @@
         <div class="toolbar-left">
           <button
             class="filter-btn"
-            [class.active]="currentFilter === 'All'"
-            (click)="setFilter('All')"
+            [class.active]="currentFilter() === 'All'"
+            (click)="currentFilter.set('All')"
           >
             All
           </button>
           <button
             class="filter-btn"
-            [class.active]="currentFilter === 'Pending'"
-            (click)="setFilter('Pending')"
+            [class.active]="currentFilter() === 'Pending'"
+            (click)="currentFilter.set('Pending')"
           >
             Pending
           </button>
           <button
             class="filter-btn"
-            [class.active]="currentFilter === 'Confirmed'"
-            (click)="setFilter('Confirmed')"
+            [class.active]="currentFilter() === 'Confirmed'"
+            (click)="currentFilter.set('Confirmed')"
           >
             Confirmed
           </button>
           <button
             class="filter-btn"
-            [class.active]="currentFilter === 'Completed'"
-            (click)="setFilter('Completed')"
+            [class.active]="currentFilter() === 'Completed'"
+            (click)="currentFilter.set('Completed')"
           >
             Completed
           </button>
           <button
             class="filter-btn"
-            [class.active]="currentFilter === 'Cancelled'"
-            (click)="setFilter('Cancelled')"
+            [class.active]="currentFilter() === 'Cancelled'"
+            (click)="currentFilter.set('Cancelled')"
           >
             Cancelled
           </button>
@@ -56,7 +56,7 @@
       <div class="panel">
         <div class="table-head">
           <div class="th">Client</div>
-          <div class="th">Car Model</div>
+          <div class="th">Vehicle Model</div>
           <div class="th">Pickup Date</div>
           <div class="th">Return Date</div>
           <div class="th">Status</div>
@@ -64,42 +64,52 @@
           <div class="th"></div>
         </div>
 
-        <div class="client-row" *ngFor="let booking of filteredBookings">
-          <div class="td client-info">
-            <div class="avatar av-gold">{{ booking.initials }}</div>
-            <div>
-              <div class="client-name">{{ booking.clientName }}</div>
-              <div class="client-email">{{ booking.bookingId }}</div>
+        @if (isLoading()) {
+          <div class="loading-state">Loading bookings...</div>
+        } @else {
+          <div class="client-row" *ngFor="let booking of filteredBookings()">
+            <div class="td client-info">
+              <div class="avatar av-gold">{{ booking.initials }}</div>
+              <div>
+                <div class="client-name">{{ booking.clientName }}</div>
+                <div class="client-email">{{ booking.bookingId }}</div>
+              </div>
+            </div>
+            <div class="td">
+              <div class="client-name">{{ booking.vehicleName }}</div>
+              <div class="client-email">{{ booking.plate }}</div>
+            </div>
+            <div class="td">{{ booking.pickup }}</div>
+            <div class="td">{{ booking.returnDate }}</div>
+            <div class="td">
+              <span
+                class="badge"
+                [ngClass]="{
+                  'badge-active': booking.status === 'Confirmed',
+                  'badge-vip': booking.status === 'Pending',
+                  'badge-available': booking.status === 'Completed',
+                  'badge-inactive': booking.status === 'Cancelled',
+                }"
+                >{{ booking.status }}</span
+              >
+            </div>
+            <div class="td td-amount" style="text-align: right">{{ booking.amount }}</div>
+            <div class="td row-actions" style="justify-content: flex-end">
+              <div class="row-btn" (click)="openEditBooking(booking)">
+                <mat-icon style="font-size: 16px; width: 16px; height: 16px">edit</mat-icon>
+              </div>
+              <div class="row-btn" (click)="openDeleteBooking(booking)">
+                <mat-icon style="font-size: 16px; width: 16px; height: 16px">delete</mat-icon>
+              </div>
             </div>
           </div>
-          <div class="td">
-            <div class="client-name">{{ booking.carName }}</div>
-            <div class="client-email">{{ booking.plate }}</div>
-          </div>
-          <div class="td">{{ booking.pickup }}</div>
-          <div class="td">{{ booking.return }}</div>
-          <div class="td">
-            <span
-              class="badge"
-              [ngClass]="{
-                'badge-active': booking.status === 'Confirmed',
-                'badge-vip': booking.status === 'Pending',
-                'badge-available': booking.status === 'Completed',
-                'badge-inactive': booking.status === 'Cancelled',
-              }"
-              >{{ booking.status }}</span
-            >
-          </div>
-          <div class="td td-amount" style="text-align: right">{{ booking.amount }}</div>
-          <div class="td row-actions" style="justify-content: flex-end">
-            <div class="row-btn" (click)="openEditBooking(booking)">
-              <mat-icon style="font-size: 16px; width: 16px; height: 16px">edit</mat-icon>
+
+          @if (filteredBookings().length === 0) {
+            <div class="empty-state">
+              <p>No bookings match your filter</p>
             </div>
-            <div class="row-btn" (click)="openDeleteBooking(booking)">
-              <mat-icon style="font-size: 16px; width: 16px; height: 16px">delete</mat-icon>
-            </div>
-          </div>
-        </div>
+          }
+        }
       </div>
     </div>
   </main>
@@ -110,6 +120,8 @@
   <app-booking-details
     [mode]="dialogMode"
     [booking]="selectedBooking"
+    [clients]="clientsList()"
+    [vehicles]="vehiclesList()"
     (close)="onDialogClose()"
     (save)="onDialogSave($event)"
   />

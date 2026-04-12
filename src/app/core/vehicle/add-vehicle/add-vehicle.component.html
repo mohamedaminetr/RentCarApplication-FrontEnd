@@ -1,0 +1,125 @@
+<div class="modal-overlay" (click)="onCancel()">
+  <div class="modal-box panel" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-title">
+        <span class="panel-eyebrow">Vehicle Management</span>
+        <h2 class="panel-title-main">{{ mode === 'add' ? 'Add New Vehicle' : 'Edit Vehicle' }}</h2>
+      </div>
+      <button class="close-btn" (click)="onCancel()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <form (submit)="onSubmit($event)" class="modal-form">
+      <div class="form-grid">
+        <div class="form-group full-width photo-upload-group">
+          <label>Vehicle Photo</label>
+          <div class="photo-area" (click)="triggerCamera(fileInput)">
+            @if (imagePreview) {
+              <img [src]="imagePreview" alt="Preview" class="photo-preview" />
+              <div class="photo-overlay">
+                <mat-icon>photo_camera</mat-icon>
+                <span>Change Photo</span>
+              </div>
+            } @else {
+              <div class="photo-placeholder">
+                <mat-icon>add_a_photo</mat-icon>
+                <span>Upload or Capture</span>
+              </div>
+            }
+          </div>
+          @if (errorMessage) {
+            <div class="error-message">
+              <mat-icon style="font-size: 14px; width: 14px; height: 14px">error_outline</mat-icon>
+              {{ errorMessage }}
+            </div>
+          }
+          <!-- Hidden Native File Input restricted to images and camera -->
+          <input
+            type="file"
+            accept="image/*"
+            capture="environment"
+            #fileInput
+            style="display: none"
+            (change)="onFileSelected($event)"
+          />
+        </div>
+
+        <div class="form-group col-span-2">
+          <label>Vehicle Name / Model</label>
+          <input
+            type="text"
+            [formField]="vehicleForm.name"
+            placeholder="e.g. Mercedes S-Class"
+            class="gold-input"
+          />
+        </div>
+
+        <div class="form-group">
+          <label>License Plate</label>
+          <input
+            type="text"
+            [formField]="vehicleForm.plate"
+            placeholder="TN · XXXX AB"
+            class="gold-input"
+          />
+        </div>
+
+        <div class="form-group">
+          <label>Type / Class</label>
+          <input
+            type="text"
+            [formField]="vehicleForm.type"
+            placeholder="Luxury Sedan"
+            class="gold-input"
+          />
+        </div>
+
+        <div class="form-group">
+          <label>Year</label>
+          <input title="year" type="number" [formField]="vehicleForm.year" class="gold-input" />
+        </div>
+
+        <div class="form-group">
+          <label>Fuel Type</label>
+          <div class="select-wrapper">
+            <select [formField]="vehicleForm.fuel" class="gold-select" title="fuel">
+              <option value="Petrol">Petrol</option>
+              <option value="Diesel">Diesel</option>
+              <option value="Hybrid">Hybrid</option>
+              <option value="Electric">Electric</option>
+            </select>
+            <mat-icon class="select-arrow">expand_more</mat-icon>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Rate Per Day ($)</label>
+          <input
+            title="rate"
+            type="number"
+            [formField]="vehicleForm.ratePerDay"
+            class="gold-input"
+          />
+        </div>
+
+        <div class="form-group">
+          <label>Initial Mileage (km)</label>
+          <input
+            title="mileage"
+            type="number"
+            [formField]="vehicleForm.mileage"
+            class="gold-input"
+          />
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-cancel" (click)="onCancel()">Cancel</button>
+        <button type="submit" class="btn-submit" [disabled]="vehicleForm().invalid()">
+          {{ mode === 'add' ? 'Save Vehicle' : 'Update Vehicle' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

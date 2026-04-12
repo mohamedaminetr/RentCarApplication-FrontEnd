@@ -20,9 +20,9 @@ export interface AppNotification {
   styleUrl: './notification.component.scss',
 })
 export class NotificationComponent {
-  @Output() close = new EventEmitter<void>();
+  @Output() public close = new EventEmitter<void>();
 
-  notifications: AppNotification[] = [
+  public notifications: AppNotification[] = [
     {
       id: '1',
       icon: 'check_circle',
@@ -61,16 +61,16 @@ export class NotificationComponent {
     },
   ];
 
-  markAsRead(id: string): void {
+  public markAsRead(id: string): void {
     const notify = this.notifications.find((n) => n.id === id);
     if (notify) notify.unread = false;
   }
 
-  markAllRead(): void {
+  public markAllRead(): void {
     this.notifications.forEach((n) => (n.unread = false));
   }
 
-  onClose(): void {
+  public onClose(): void {
     this.close.emit();
   }
 }

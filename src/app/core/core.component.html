@@ -1,5 +1,4 @@
 <div class="layout">
-
   <!-- Mobile Header (Hidden on Desktop) -->
   <div class="mobile-header">
     <div class="sidebar-brand">
@@ -40,7 +39,6 @@
           [class.active]="isSelected(item.route)"
           (click)="selectedNavChanges(item.id)"
         >
-          <!-- 👇 One line replaces all the SVG switch blocks -->
           <mat-icon class="nav-icon">{{ item.icon }}</mat-icon>
 
           {{ item.label }}
@@ -54,13 +52,13 @@
 
     <!-- Footer -->
     <div class="sidebar-footer">
-      @if (auth.user$ | async; as user) {
+      <!-- @if (auth.user$ | async; as user) {
         <div class="user-card">
           @if (user.picture) {
             <img
               alt="userAvatar"
               [src]="user.picture"
-              [alt]="user.name ?? ''"
+              [alt]="user.name"
               class="user-avatar-img"
             />
           }
@@ -69,7 +67,7 @@
             <div class="user-role">Manager</div>
           </div>
         </div>
-      }
+      } -->
     </div>
   </aside>
 

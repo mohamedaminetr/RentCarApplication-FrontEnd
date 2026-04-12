@@ -1,5 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Montserrat:wght@300;400;500&display=swap');
+@import '@angular/material/prebuilt-themes/azure-blue.css';
 
 *,
 *::before,
@@ -376,6 +377,7 @@ body {
 
 /* ─── PANEL ─── */
 .panel {
+  margin-bottom: 1.5rem;
   background: var(--surface);
   border: 1px solid var(--gold-line);
   position: relative;
@@ -551,14 +553,14 @@ body {
   background: rgba(240, 96, 96, 0.05) !important;
 }
 
-/* ─── CAR GRID ─── */
-.car-grid {
+/* ─── VEHICLE GRID ─── */
+.vehicle-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 16px;
   margin-bottom: 2rem;
 }
-.car-card {
+.vehicle-card {
   background: var(--surface);
   border: 1px solid var(--gold-line);
   padding: 1.5rem;
@@ -580,27 +582,27 @@ body {
     background: linear-gradient(90deg, transparent, var(--gold), transparent);
   }
 }
-.car-header {
+.vehicle-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 1.25rem;
 }
-.car-name {
+.vehicle-name {
   font-family: 'Cormorant Garamond', serif;
   font-size: 20px;
   font-weight: 300;
   color: var(--text);
   margin-bottom: 4px;
 }
-.car-type {
+.vehicle-type {
   font-size: 10px;
   letter-spacing: 2px;
   color: var(--tm);
   text-transform: uppercase;
   margin-bottom: 1rem;
 }
-.car-meta {
+.vehicle-meta {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 8px;
@@ -619,7 +621,7 @@ body {
   font-weight: 500;
   color: var(--text);
 }
-.car-actions {
+.vehicle-actions {
   display: flex;
   gap: 8px;
   margin-top: 1rem;
@@ -665,7 +667,7 @@ body {
   .stats-grid {
     grid-template-columns: repeat(2, 1fr);
   }
-  .car-grid {
+  .vehicle-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
@@ -727,7 +729,7 @@ body {
     font-size: 9px;
   }
 
-  .car-grid {
+  .vehicle-grid {
     grid-template-columns: 1fr;
   }
 

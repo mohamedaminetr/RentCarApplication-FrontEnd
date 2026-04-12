@@ -1,0 +1,58 @@
+<div class="shell">
+  <div class="bg-layer"></div>
+  <main class="main">
+    <rentcar-topbar title="Revenue & Reports" eyebrow="Finance"></rentcar-topbar>
+
+    <div class="content">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Total Revenue</div>
+          <div class="stat-value">{{ stats().revenue }}</div>
+          <div class="stat-change up">Live Calculation</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Pending Payments</div>
+          <div class="stat-value">{{ stats().pending }}</div>
+          <div class="stat-change down">Live Calculation</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Net Profit</div>
+          <div class="stat-value">{{ stats().profit }}</div>
+          <div class="stat-change up">Estimated 65% Margin</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Avg Booking Value</div>
+          <div class="stat-value">{{ stats().avg }}</div>
+          <div class="stat-change up">Live Calculation</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header" style="padding: 1.5rem 1.5rem 0">
+          <div>
+            <div class="panel-eyebrow">Overview</div>
+            <div class="panel-title-main">Revenue Breakdown</div>
+          </div>
+        </div>
+        <div
+          class="panel-bottom"
+          style="
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(245, 240, 232, 0.4);
+          "
+        >
+          <!-- Mock Chart Area -->
+          <mat-icon style="font-size: 48px; width: 48px; height: 48px; opacity: 0.5"
+            >bar_chart</mat-icon
+          >
+          <span style="margin-left: 1rem; font-size: 14px; letter-spacing: 2px"
+            >CHART VISUALIZATION</span
+          >
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

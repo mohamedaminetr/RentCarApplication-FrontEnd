@@ -1,0 +1,54 @@
+<div class="shell">
+  <div class="bg-layer"></div>
+  <main class="main">
+    <rentcar-topbar title="Application Settings" eyebrow="Preferences"></rentcar-topbar>
+
+    <div class="content">
+      <div class="vehicle-grid" style="grid-template-columns: repeat(2, 1fr)">
+        <div class="vehicle-card">
+          <div class="vehicle-header">
+            <mat-icon style="color: var(--gold); vertical-align: middle">account_circle</mat-icon>
+            <span class="badge badge-active">Active</span>
+          </div>
+          <div class="vehicle-name">Account Details</div>
+          <div class="vehicle-type">Manage your profile and preferences</div>
+          <div class="vehicle-meta">
+            <div>
+              <div class="meta-label">Email</div>
+              <div class="meta-value">manager@rentcar.com</div>
+            </div>
+            <div>
+              <div class="meta-label">Role</div>
+              <div class="meta-value">Administrator</div>
+            </div>
+          </div>
+          <div class="vehicle-actions">
+            <button class="action-secondary">Edit Profile</button>
+            <button class="action-primary">Change Password</button>
+          </div>
+        </div>
+
+        <div class="vehicle-card">
+          <div class="vehicle-header">
+            <mat-icon style="color: var(--gold); vertical-align: middle">notifications</mat-icon>
+          </div>
+          <div class="vehicle-name">Notifications</div>
+          <div class="vehicle-type">Email & In-app alerts</div>
+          <div class="vehicle-meta">
+            <div>
+              <div class="meta-label">New Bookings</div>
+              <div class="meta-value">Enabled</div>
+            </div>
+            <div>
+              <div class="meta-label">Maintenance</div>
+              <div class="meta-value">Enabled</div>
+            </div>
+          </div>
+          <div class="vehicle-actions">
+            <button class="action-secondary">Configure</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

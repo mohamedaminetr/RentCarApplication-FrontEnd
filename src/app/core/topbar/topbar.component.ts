@@ -1,10 +1,10 @@
-import { Component, Input, Output, EventEmitter, Inject } from '@angular/core';
+import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { AuthService } from '@auth0/auth0-angular';
 import { MatIcon } from '@angular/material/icon';
 import { NotificationComponent } from '../notification/notification.component';
+import { AppAuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'rentcar-topbar',
@@ -14,32 +14,31 @@ import { NotificationComponent } from '../notification/notification.component';
   styleUrl: './topbar.component.scss',
 })
 export class TopbarComponent {
-  @Input() title = '';
-  @Input() eyebrow = 'Management';
-  @Input() searchPlaceholder = 'Search...';
-  @Input() searchText = '';
-  @Output() searchChange = new EventEmitter<string>();
+  @Input() public title = '';
+  @Input() public eyebrow = 'Management';
+  @Input() public searchPlaceholder = 'Search...';
+  @Input() public searchText = '';
+  @Output() public searchChange = new EventEmitter<string>();
 
-  isNotificationOpen = false;
+  public auth = inject(AppAuthService);
+  public router = inject(Router);
 
-  constructor(
-    public router: Router,
-    @Inject(AuthService) public auth: AuthService,
-  ) {}
+  public isNotificationOpen = false;
 
-  toggleNotifications(): void {
+  public toggleNotifications(): void {
     this.isNotificationOpen = !this.isNotificationOpen;
   }
 
-  closeNotifications(): void {
+  public closeNotifications(): void {
     this.isNotificationOpen = false;
   }
 
-  logout(): void {
-    this.auth.logout({ logoutParams: { returnTo: window.location.origin } });
+  public logout(): void {
+    this.auth.logout();
+    this.router.navigate(['/login']);
   }
 
-  onSearch(value: string): void {
+  public onSearch(value: string): void {
     this.searchChange.emit(value);
   }
 }

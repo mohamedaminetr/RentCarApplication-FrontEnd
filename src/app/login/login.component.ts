@@ -1,43 +1,59 @@
-import { Component, Inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { AuthService } from '@auth0/auth0-angular';
 import { MatIconModule } from '@angular/material/icon';
+import { AppAuthService, Credentials } from '../services/auth.service';
+import { email, form, FormField, required } from '@angular/forms/signals';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'rentcar-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
-  imports: [CommonModule, MatIconModule],
+  imports: [CommonModule, MatIconModule, FormField, ReactiveFormsModule],
 })
 export class LoginComponent {
-  constructor(
-    public router: Router,
-    public auth: AuthService,
-  ) {}
+  public authService = inject(AppAuthService);
+  public router = inject(Router);
+  public isLoading = signal(false);
+  public error = signal<string | null>(null);
 
-  public login(isSignUp = false): void {
-    this.auth.loginWithRedirect({
-      authorizationParams: {
-        screen_hint: isSignUp ? 'signup' : 'login',
-      },
-    });
+  // Signal-based form
+  public loginModel = signal<Credentials>({
+    email: '',
+    password: '',
+  });
+
+  public loginForm = form(this.loginModel, (fieldPath) => {
+    required(fieldPath.email, { message: 'Email is required' });
+    required(fieldPath.password, { message: 'Password is required' });
+    email(fieldPath.email, { message: 'Enter a valid email address' });
+  });
+
+  public async onLogin(event: Event): Promise<void> {
+    event.preventDefault();
+    this.isLoading.set(true);
+    this.error.set(null);
+
+    try {
+      await this.authService.login({
+        email: this.loginForm.email().value(),
+        password: this.loginForm.password().value(),
+      });
+      this.isLoading.set(false);
+      this.router.navigate(['/home']);
+    } catch (err) {
+      this.isLoading.set(false);
+      this.error.set('Login failed. Please check your credentials.');
+      console.error('Login Error:', err);
+    }
   }
 
-  public loginWithGoogle(): void {
-    this.auth.loginWithRedirect({
-      authorizationParams: {
-        connection: 'google-oauth2',
-      },
-    });
-  }
-
-  public logout(): void {
-    this.auth.logout({
-      logoutParams: { returnTo: window.location.origin },
-    });
-  }
   public navigateTo(routeTo: string): void {
     this.router.navigate([routeTo]);
+  }
+
+  public async onLogout(): Promise<void> {
+    await this.authService.logout();
   }
 }

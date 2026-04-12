@@ -1,0 +1,248 @@
+<div class="shell">
+  <div class="bg-layer"></div>
+
+  <main class="main">
+    <!-- TOPBAR -->
+    <rentcar-topbar
+      title="Vehicles"
+      eyebrow="Vehicle Management"
+      searchPlaceholder="Search vehicles..."
+      [searchText]="searchQuery()"
+      (searchChange)="searchQuery.set($event)"
+    ></rentcar-topbar>
+
+    <div class="content">
+      <!-- STATS -->
+      <div class="stats-grid">
+        @for (stat of stats(); track stat.label) {
+          <div class="stat-card">
+            <div class="stat-label">{{ stat.label }}</div>
+            <div class="stat-value">{{ stat.value }}</div>
+            <div class="stat-change" [class.up]="stat.up" [class.down]="!stat.up">
+              {{ stat.change }}
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- TOOLBAR -->
+      <div class="toolbar">
+        <div class="toolbar-left">
+          <button
+            class="filter-btn"
+            [class.active]="activeFilter() === 'all'"
+            (click)="activeFilter.set('all')"
+          >
+            All
+          </button>
+          <button
+            class="filter-btn"
+            [class.active]="activeFilter() === 'available'"
+            (click)="activeFilter.set('available')"
+          >
+            Available
+          </button>
+          <button
+            class="filter-btn"
+            [class.active]="activeFilter() === 'rented'"
+            (click)="activeFilter.set('rented')"
+          >
+            Rented
+          </button>
+          <button
+            class="filter-btn"
+            [class.active]="activeFilter() === 'service'"
+            (click)="activeFilter.set('service')"
+          >
+            Service
+          </button>
+        </div>
+        <div style="display: flex; gap: 10px; align-items: center">
+          <div class="view-btns">
+            <div class="view-btn" [class.active]="viewMode === 'grid'" (click)="setView('grid')">
+              <mat-icon style="font-size: 16px; width: 16px; height: 16px">grid_view</mat-icon>
+            </div>
+            <div class="view-btn" [class.active]="viewMode === 'list'" (click)="setView('list')">
+              <mat-icon style="font-size: 16px; width: 16px; height: 16px"
+                >format_list_bulleted</mat-icon
+              >
+            </div>
+          </div>
+          <button class="add-btn" (click)="showAddModal = true">
+            <mat-icon style="font-size: 14px; width: 14px; height: 14px">add</mat-icon>
+            Add Vehicle
+          </button>
+        </div>
+      </div>
+
+      <!-- GRID VIEW -->
+      @if (viewMode === 'grid') {
+        <div class="vehicle-grid">
+          @if (isLoading()) {
+            <div class="loading-state">Loading vehicles...</div>
+          } @else {
+            @for (vehicle of filteredVehicles(); track vehicle.id) {
+              <div class="vehicle-card" (click)="selectVehicle(vehicle)">
+                <div class="vehicle-header">
+                  <span class="vehicle-plate">{{ vehicle.plate }}</span>
+                  <span class="badge" [class]="'badge-' + vehicle.status">
+                    {{ vehicle.status === 'service' ? 'Service' : (vehicle.status | titlecase) }}
+                  </span>
+                </div>
+
+                <img
+                  *ngIf="vehicle.image"
+                  [src]="vehicle.image"
+                  alt="Vehicle Image"
+                  style="width: 100%; height: 120px; object-fit: contain; margin-bottom: 20px"
+                />
+
+                <div class="vehicle-name">{{ vehicle.name }}</div>
+                <div class="vehicle-type">{{ vehicle.type }}</div>
+
+                <div class="vehicle-meta">
+                  <div class="meta-item">
+                    <div class="meta-label">Year</div>
+                    <div class="meta-value">{{ vehicle.year }}</div>
+                  </div>
+                  <div class="meta-item">
+                    <div class="meta-label">Rate/Day</div>
+                    <div class="meta-value">{{ formatCurrency(vehicle.ratePerDay) }}</div>
+                  </div>
+                  <div class="meta-item">
+                    <div class="meta-label">Mileage</div>
+                    <div class="meta-value">{{ formatMileage(vehicle.mileage) }}</div>
+                  </div>
+                  <div class="meta-item">
+                    <div class="meta-label">
+                      {{
+                        vehicle.returnDate ? 'Return' : vehicle.readyDate ? 'Est. Ready' : 'Fuel'
+                      }}
+                    </div>
+                    <div
+                      class="meta-value"
+                      [class.date-warning]="vehicle.returnDate"
+                      [class.date-ok]="vehicle.readyDate"
+                    >
+                      {{ vehicle.returnDate ?? vehicle.readyDate ?? vehicle.fuel }}
+                    </div>
+                  </div>
+                </div>
+
+                <div class="vehicle-actions">
+                  <button
+                    class="action-primary"
+                    (click)="router.navigate(['/vehicle', vehicle.id])"
+                  >
+                    {{ primaryAction(vehicle) }}
+                  </button>
+                  @if (vehicle.status !== 'service') {
+                    <button
+                      class="action-secondary"
+                      (click)="router.navigate(['/vehicle', vehicle.id])"
+                    >
+                      Details
+                    </button>
+                  }
+                  <button
+                    class="action-delete"
+                    (click)="selectVehicle(vehicle, 'view', true); $event.stopPropagation()"
+                  >
+                    <mat-icon style="font-size: 14px; width: 14px; height: 14px"
+                      >delete_outline</mat-icon
+                    >
+                  </button>
+                </div>
+              </div>
+            }
+
+            @if (filteredVehicles().length === 0) {
+              <div class="empty-state">
+                <mat-icon
+                  style="font-size: 32px; width: 32px; height: 32px; color: rgba(212, 168, 67, 0.3)"
+                >
+                  directions_car
+                </mat-icon>
+                <p>No vehicles match your search</p>
+              </div>
+            }
+          }
+        </div>
+      }
+
+      <!-- BOTTOM ROW -->
+      <div class="bottom-row">
+        <!-- SERVICE SCHEDULE -->
+        <div class="panel panel-bottom">
+          <div class="panel-header">
+            <div>
+              <div class="panel-eyebrow">Upcoming</div>
+              <div class="panel-title">Service Schedule</div>
+            </div>
+            <span class="panel-link">View All</span>
+          </div>
+          @for (svc of serviceSchedule; track svc.name) {
+            <div class="svc-row">
+              <div class="svc-dot" [class]="svc.dotClass"></div>
+              <div class="svc-info">
+                <div class="svc-name">{{ svc.name }}</div>
+                <div class="svc-detail">{{ svc.detail }}</div>
+              </div>
+              <div class="svc-date">{{ svc.date }}</div>
+            </div>
+          }
+        </div>
+
+        <!-- UTILIZATION -->
+        <div class="panel panel-bottom">
+          <div class="panel-header">
+            <div>
+              <div class="panel-eyebrow">This month</div>
+              <div class="panel-title">Utilization</div>
+            </div>
+          </div>
+          <div class="util-list">
+            @for (v of utilization(); track v.id) {
+              <div class="util-item">
+                <div class="util-header">
+                  <span class="util-label">{{ v.name }}</span>
+                  <span class="util-val">{{ v.utilization }}%</span>
+                </div>
+                <div class="util-bar">
+                  <div
+                    class="util-fill"
+                    [class]="utilizationColor(v.utilization)"
+                    [style.width.%]="v.utilization"
+                  ></div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+
+    @if (showAddModal || viewModeDetails === 'edit') {
+      <app-add-vehicle
+        [mode]="viewModeDetails === 'edit' ? 'edit' : 'add'"
+        [vehicle]="viewModeDetails === 'edit' ? selectedVehicle : null"
+        (close)="showAddModal = false; closeDetails()"
+        (save)="
+          viewModeDetails === 'edit'
+            ? onVehicleUpdate(selectedVehicle!.id, $event)
+            : onVehicleAdd($event)
+        "
+      ></app-add-vehicle>
+    }
+
+    @if (selectedVehicle && viewModeDetails === 'view') {
+      <app-vehicle-details
+        [vehicle]="selectedVehicle"
+        [isConfirming]="isDeleting"
+        (close)="closeDetails()"
+        (deleteVehicle)="onVehicleDelete($event)"
+        (edit)="selectVehicle(selectedVehicle, 'edit')"
+      ></app-vehicle-details>
+    }
+  </main>
+</div>

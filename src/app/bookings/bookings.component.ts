@@ -1,23 +1,14 @@
-import { Component } from '@angular/core';
+import { Component, inject, signal, OnInit, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
-import { BookingDetailsComponent } from './bookings-dialog/booking-details.component';
+import { BookingDetailsComponent } from './bookings-details/booking-details.component';
 import { TopbarComponent } from '../core/topbar/topbar.component';
-
-// ── Shared interface ──────────────────────────────────────────────────────────
-export interface Booking {
-  initials: string;
-  clientName: string;
-  bookingId: string;
-  carName: string;
-  plate: string;
-  pickup: string;
-  return: string;
-  status: 'Pending' | 'Confirmed' | 'Completed' | 'Cancelled';
-  amount: string;
-}
-
-export type DialogMode = 'new' | 'edit' | 'delete' | null;
+import { BookingService, BookingFilter } from '../services/booking.service';
+import { ClientService } from '../services/client.service';
+import { VehicleService } from '../services/vehicle.service';
+import { ActivatedRoute } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Booking, DialogMode } from '../models/booking.model';
 
 @Component({
   selector: 'app-bookings',
@@ -25,108 +16,108 @@ export type DialogMode = 'new' | 'edit' | 'delete' | null;
   templateUrl: './bookings.component.html',
   styleUrl: './bookings.component.scss',
 })
-export class BookingsComponent {
-  currentFilter = 'All';
+export class BookingsComponent implements OnInit {
+  private bookingService = inject(BookingService);
+  private clientService = inject(ClientService);
+  private vehicleService = inject(VehicleService);
+
+  // State
+  public bookings = signal<Booking[]>([]);
+  public clientsList = signal<any[]>([]);
+  public vehiclesList = signal<any[]>([]);
+  public isLoading = signal<boolean>(false);
+  public error = signal<string | null>(null);
+  public currentFilter = signal<BookingFilter>('All');
+
+  // Computed
+  public filteredBookings = computed(() => {
+    return this.bookingService.filterBookings(this.bookings(), this.currentFilter());
+  });
 
   // Dialog state
-  dialogMode: DialogMode = null;
-  selectedBooking: Booking | null = null;
+  public dialogMode: DialogMode = null;
+  public selectedBooking: Booking | null = null;
 
-  get filteredBookings(): Booking[] {
-    if (this.currentFilter === 'All') return this.mockBookings;
-    return this.mockBookings.filter((b) => b.status === this.currentFilter);
+  private route = inject(ActivatedRoute);
+
+  public async ngOnInit(): Promise<void> {
+    await this.loadBookings();
+    this.clientService.getClients().then((data) => this.clientsList.set(data));
+    this.vehicleService.getVehicles().then((data) => this.vehiclesList.set(data));
+    
+    this.route.queryParams.subscribe((params: any) => {
+      if (params['action'] === 'new') {
+        this.openNewBooking();
+      }
+    });
   }
 
-  setFilter(filter: string) {
-    this.currentFilter = filter;
+  public async loadBookings(): Promise<void> {
+    this.isLoading.set(true);
+    this.error.set(null);
+    try {
+      const data = await this.bookingService.getBookings();
+      this.bookings.set(data);
+      this.isLoading.set(false);
+    } catch (err) {
+      this.error.set('Failed to load bookings');
+      this.isLoading.set(false);
+    }
   }
 
   // ── Open helpers ──────────────────────────────────────────────────────────
-  openNewBooking() {
+  public openNewBooking(): void {
     this.selectedBooking = null;
     this.dialogMode = 'new';
   }
 
-  openEditBooking(booking: Booking) {
+  public openEditBooking(booking: Booking): void {
     this.selectedBooking = { ...booking };
     this.dialogMode = 'edit';
   }
 
-  openDeleteBooking(booking: Booking) {
+  public openDeleteBooking(booking: Booking): void {
     this.selectedBooking = { ...booking };
     this.dialogMode = 'delete';
   }
 
   // ── Dialog event handlers ─────────────────────────────────────────────────
-  onDialogClose() {
+  public onDialogClose(): void {
     this.dialogMode = null;
     this.selectedBooking = null;
   }
 
-  onDialogSave(booking: Booking) {
-    if (this.dialogMode === 'new') {
-      const names = booking.clientName.trim().split(' ');
-      booking.initials = (names[0]?.[0] ?? '').toUpperCase() + (names[1]?.[0] ?? '').toUpperCase();
-      this.mockBookings = [...this.mockBookings, booking];
-    }
+  public snackBar = inject(MatSnackBar);
 
-    if (this.dialogMode === 'edit') {
-      this.mockBookings = this.mockBookings.map((b) =>
-        b.bookingId === booking.bookingId ? { ...b, ...booking } : b,
-      );
-    }
+  public async onDialogSave(booking: any): Promise<void> {
+    try {
+      if (this.dialogMode === 'new') {
+        const names = booking.clientName.trim().split(' ');
+        booking.initials = (names[0]?.[0] ?? '').toUpperCase() + (names[1]?.[0] ?? '').toUpperCase();
+        const newBooking = await this.bookingService.createBooking(booking);
+        this.bookings.update((list) => [...list, newBooking]);
+        this.snackBar.open('Booking added successfully!', 'Close', { duration: 3000 });
+      }
 
-    if (this.dialogMode === 'delete') {
-      this.mockBookings = this.mockBookings.filter((b) => b.bookingId !== booking.bookingId);
+      if (this.dialogMode === 'edit' && this.selectedBooking && this.selectedBooking.id != null) {
+        const updated = await this.bookingService.updateBooking(this.selectedBooking.id, booking);
+        this.bookings.update((list) => list.map((b) => (b.id === updated.id ? updated : b)));
+        this.snackBar.open('Booking updated successfully!', 'Close', { duration: 3000 });
+      }
+
+      if (
+        this.dialogMode === 'delete' &&
+        this.selectedBooking &&
+        this.selectedBooking.id !== undefined
+      ) {
+        await this.bookingService.deleteBooking(this.selectedBooking.id);
+        this.bookings.update((list) => list.filter((b) => b.id !== this.selectedBooking?.id));
+        this.snackBar.open('Booking deleted successfully!', 'Close', { duration: 3000 });
+      }
+    } catch (err) {
+      this.error.set('Operation failed');
     }
 
     this.onDialogClose();
   }
-
-  mockBookings: Booking[] = [
-    {
-      initials: 'JD',
-      clientName: 'John Doe',
-      bookingId: 'BKG-0012',
-      carName: 'Mercedes S-Class',
-      plate: 'S-777-VIP',
-      pickup: '12 Aug, 10:00',
-      return: '15 Aug, 10:00',
-      status: 'Confirmed',
-      amount: '$450',
-    },
-    {
-      initials: 'AS',
-      clientName: 'Alice Smith',
-      bookingId: 'BKG-0013',
-      carName: 'BMW X5',
-      plate: 'X-555-SUV',
-      pickup: '14 Aug, 12:00',
-      return: '20 Aug, 12:00',
-      status: 'Pending',
-      amount: '$820',
-    },
-    {
-      initials: 'MJ',
-      clientName: 'Mike Johnson',
-      bookingId: 'BKG-0014',
-      carName: 'Audi A6',
-      plate: 'A-666-SED',
-      pickup: '01 Aug, 09:00',
-      return: '05 Aug, 09:00',
-      status: 'Completed',
-      amount: '$310',
-    },
-    {
-      initials: 'EK',
-      clientName: 'Emma King',
-      bookingId: 'BKG-0015',
-      carName: 'Porsche 911',
-      plate: 'P-911-FST',
-      pickup: '08 Aug, 14:00',
-      return: '10 Aug, 14:00',
-      status: 'Cancelled',
-      amount: '$600',
-    },
-  ];
 }

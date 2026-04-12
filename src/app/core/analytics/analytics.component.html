@@ -1,0 +1,60 @@
+<div class="shell">
+  <div class="bg-layer"></div>
+  <main class="main">
+    <rentcar-topbar title="Analytics Dashboard" eyebrow="Metrics"></rentcar-topbar>
+
+    <div class="content">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Vehicle Utilization</div>
+          <div class="stat-value">{{ stats().utilization }}</div>
+          <div class="stat-change up">Live Calculation</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Active Users</div>
+          <div class="stat-value">{{ stats().activeUsers }}</div>
+          <div class="stat-change up">Live Calculation</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Avg Rental Duration</div>
+          <div class="stat-value">{{ stats().duration }}</div>
+          <div class="stat-change down">-0.1 days</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Customer Satisfaction</div>
+          <div class="stat-value">{{ stats().satisfaction }}</div>
+          <div class="stat-change up">Stable</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header" style="padding: 1.5rem 1.5rem 0">
+          <div>
+            <div class="panel-eyebrow">Performance</div>
+            <div class="panel-title-main">Top Performing Vehicles</div>
+          </div>
+        </div>
+        <div class="table-head">
+          <div class="th">Vehicle</div>
+          <div class="th">Total Rentals</div>
+          <div class="th">Utilization</div>
+        </div>
+        @for (vehicle of topVehicles(); track vehicle.id) {
+          <div class="client-row">
+            <div class="td client-info">
+              <div class="avatar av-gold">{{ vehicle.name.charAt(0) }}</div>
+              <div>
+                <div class="client-name">{{ vehicle.name }}</div>
+                <div class="client-email">{{ vehicle.type }}</div>
+              </div>
+            </div>
+            <div class="td td-amount">{{ vehicle.mileage }} km</div>
+            <div class="td">
+              <span class="badge" [class.badge-active]="vehicle.utilization > 50" [class.badge-inactive]="vehicle.utilization <= 50">{{ vehicle.utilization }}%</span>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </main>
+</div>

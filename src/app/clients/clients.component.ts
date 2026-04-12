@@ -1,22 +1,13 @@
-import { Component, Inject } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule, TitleCasePipe } from '@angular/common';
-import { Router } from '@angular/router';
-import { AuthService } from '@auth0/auth0-angular';
+import { Router, ActivatedRoute } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { FormsModule } from '@angular/forms';
 import { MatIcon } from '@angular/material/icon';
 import { ClientDetailsComponent } from './client-details/client-details.component';
 import { TopbarComponent } from '../core/topbar/topbar.component';
-
-export interface Client {
-  initials: string;
-  name: string;
-  email: string;
-  phone: string;
-  rentals: number;
-  totalSpent: number;
-  status: 'vip' | 'active' | 'inactive';
-  avatarClass: string;
-}
+import { Client } from '../models/client.model';
+import { ClientService } from '../services/client.service';
 
 @Component({
   selector: 'rentcar-clients',
@@ -31,176 +22,164 @@ export interface Client {
     TopbarComponent,
   ],
 })
-export class ClientsComponent {
-  searchQuery = '';
-  activeFilter: 'all' | 'vip' | 'active' | 'inactive' = 'all';
-  currentPage = 1;
-  pages = [1, 2, 3];
-  miniBarHeights = [30, 20, 36, 24, 40, 28, 48];
+export class ClientsComponent implements OnInit {
+  public clientService = inject(ClientService);
+  public router = inject(Router);
+  public clients = signal<Client[]>([]);
+  public currentPage = 1;
+  public pages = [1, 2, 3];
+  public miniBarHeights = [30, 20, 36, 24, 40, 28, 48];
+  public activeFilter = signal<'all' | 'vip' | 'active' | 'inactive'>('all');
+  public searchQuery = signal<string>('');
+  public selectedClient: Client | null = null;
+  public viewMode: 'view' | 'edit' | 'add' = 'view';
+  public isDeleting = false;
+  public isLoading = signal<boolean>(false);
 
-  // ── Client Details ────────────────────────────────────────────
-  selectedClient: Client | null = null;
-  viewMode: 'view' | 'edit' | 'add' = 'view';
-  isDeleting = false;
+  public snackBar = inject(MatSnackBar);
+  public route = inject(ActivatedRoute);
 
-  openDetails(client: Client, mode: 'view' | 'edit' = 'view', isDeletion = false): void {
+  public async ngOnInit(): Promise<void> {
+    await this.loadClients();
+    this.route.queryParams.subscribe((params: any) => {
+      if (params['action'] === 'new') {
+        this.openAddClient();
+      }
+    });
+  }
+  private async loadClients(): Promise<void> {
+    this.isLoading.set(true);
+    try {
+      const data = await this.clientService.getClients();
+      this.clients.set(data);
+    } catch (error) {
+      console.error('Error fetching clients:', error);
+    } finally {
+      this.isLoading.set(false);
+    }
+  }
+  public openDetails(client: Client, mode: 'view' | 'edit' = 'view', isDeletion = false): void {
     this.selectedClient = { ...client };
     this.viewMode = mode;
     this.isDeleting = isDeletion;
   }
 
-  openAddClient(): void {
-    this.selectedClient = {
-      initials: '',
-      name: '',
-      email: '',
-      phone: '',
-      rentals: 0,
-      totalSpent: 0,
-      status: 'active',
-      avatarClass: 'av-teal',
-    };
+  public openAddClient(): void {
+    this.selectedClient = new Client();
     this.viewMode = 'add';
   }
 
-  closeDetails(): void {
+  public closeDetails(): void {
     this.selectedClient = null;
     this.isDeleting = false;
   }
 
-  onAddClient(client: Client): void {
-    this.allClients.unshift(client);
-    this.closeDetails();
-  }
-
-  onUpdateClient(client: Client): void {
-    const idx = this.allClients.findIndex((c) => c.email === client.email);
-    if (idx !== -1) {
-      this.allClients[idx] = client;
+  public async onAddClient(client: Client): Promise<void> {
+    try {
+      await this.clientService.createClient(client);
+      await this.loadClients();
+      this.closeDetails();
+      this.snackBar.open('Client added successfully!', 'Close', { duration: 3000 });
+    } catch (error) {
+      console.error('Add failed:', error);
     }
-    this.closeDetails();
   }
 
-  onDeleteClient(client: Client): void {
-    this.allClients = this.allClients.filter((c) => c.email !== client.email);
-    this.closeDetails();
+  public async onUpdateClient(client: Client): Promise<void> {
+    if (!this.selectedClient) return;
+    try {
+      await this.clientService.updateClient(this.selectedClient.id, client);
+      await this.loadClients();
+      this.closeDetails();
+      this.snackBar.open('Client updated successfully!', 'Close', { duration: 3000 });
+    } catch (error) {
+      console.error('Update failed:', error);
+    }
   }
 
-  onNewRental(client: Client): void {
+  public async onDeleteClient(client: Client): Promise<void> {
+    try {
+      await this.clientService.deleteClient(client.id);
+      await this.loadClients();
+      this.closeDetails();
+      this.snackBar.open('Client deleted successfully!', 'Close', { duration: 3000 });
+    } catch (error) {
+      console.error('Delete failed:', error);
+    }
+  }
+
+  public onNewRental(client: Client): void {
     this.closeDetails();
     this.selectedClient = null;
   }
 
-  onMessage(client: Client): void {
+  public onMessage(client: Client): void {
     // hook up your messaging flow here
   }
-  // ─────────────────────────────────────────────────────────────
 
-  stats = [
-    { label: 'Total Clients', value: '142', change: '↑ 12 this month', up: true },
-    { label: 'VIP Members', value: '28', change: '↑ 3 new', up: true },
-    { label: 'Avg. Lifetime Value', value: '$2.4k', change: '↑ 8% vs last qtr', up: true },
-    { label: 'Inactive (90d)', value: '19', change: '↑ 4 this month', up: false },
-  ];
-
-  allClients: Client[] = [
-    {
-      initials: 'KA',
-      name: 'Karim Ayari',
-      email: 'k.ayari@email.com',
-      phone: '+216 55 123 456',
-      rentals: 14,
-      totalSpent: 3240,
-      status: 'vip',
-      avatarClass: 'av-gold',
-    },
-    {
-      initials: 'SB',
-      name: 'Sonia Ben Ali',
-      email: 'sonia.ba@email.com',
-      phone: '+216 98 765 432',
-      rentals: 9,
-      totalSpent: 2180,
-      status: 'active',
-      avatarClass: 'av-teal',
-    },
-    {
-      initials: 'MH',
-      name: 'Mohamed Hamdi',
-      email: 'm.hamdi@email.com',
-      phone: '+216 22 334 556',
-      rentals: 6,
-      totalSpent: 1560,
-      status: 'active',
-      avatarClass: 'av-blue',
-    },
-    {
-      initials: 'LT',
-      name: 'Leila Trabelsi',
-      email: 'l.trabelsi@email.com',
-      phone: '+216 71 889 900',
-      rentals: 21,
-      totalSpent: 5840,
-      status: 'vip',
-      avatarClass: 'av-purple',
-    },
-    {
-      initials: 'RB',
-      name: 'Rami Bchir',
-      email: 'r.bchir@email.com',
-      phone: '+216 50 112 233',
-      rentals: 2,
-      totalSpent: 380,
-      status: 'inactive',
-      avatarClass: 'av-red',
-    },
-    {
-      initials: 'NA',
-      name: 'Nour Aouadi',
-      email: 'n.aouadi@email.com',
-      phone: '+216 93 441 220',
-      rentals: 11,
-      totalSpent: 2990,
-      status: 'vip',
-      avatarClass: 'av-gold',
-    },
-  ];
-
-  segments = [
-    { label: 'VIP Members', value: '28 clients · 20%', pct: 20, colorClass: 'seg-gold' },
-    { label: 'Regular Active', value: '87 clients · 61%', pct: 61, colorClass: 'seg-green' },
-    { label: 'Occasional', value: '27 clients · 19%', pct: 19, colorClass: 'seg-blue' },
-    { label: 'Inactive (90d+)', value: '19 clients · 13%', pct: 13, colorClass: 'seg-red' },
-  ];
-
-  constructor(
-    public router: Router,
-    @Inject(AuthService) public auth: AuthService,
-  ) {}
-
-  get topClients(): Client[] {
-    return [...this.allClients].sort((a, b) => b.totalSpent - a.totalSpent).slice(0, 5);
+  public get topClients(): Client[] {
+    return [...this.clients()].sort((a, b) => b.totalSpent - a.totalSpent).slice(0, 5);
   }
 
-  get filteredClients(): Client[] {
-    return this.allClients.filter((c) => {
-      const matchesFilter = this.activeFilter === 'all' || c.status === this.activeFilter;
-      const matchesSearch =
-        c.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-        c.email.toLowerCase().includes(this.searchQuery.toLowerCase());
-      return matchesFilter && matchesSearch;
-    });
-  }
-
-  setFilter(filter: 'all' | 'vip' | 'active' | 'inactive'): void {
-    this.activeFilter = filter;
-  }
-
-  formatCurrency(amount: number): string {
+  public formatCurrency(amount: number): string {
     return '$' + amount.toLocaleString();
   }
 
-  logout(): void {
-    // Logout logic is now handled in TopbarComponent
-  }
+  public segments = computed(() => {
+    const clients = this.clients();
+    const total = clients.length || 1;
+
+    const vipCount = clients.filter((c) => c.status === 'vip').length;
+    const activeCount = clients.filter((c) => c.status === 'active').length;
+    const inactiveCount = clients.filter((c) => c.status === 'inactive').length;
+
+    // Calculate percentages
+    const vipPct = Math.round((vipCount / total) * 100);
+    const activePct = Math.round((activeCount / total) * 100);
+    const inactivePct = Math.round((inactiveCount / total) * 100);
+
+    return [
+      { label: 'VIP Members', value: `${vipCount} clients · ${vipPct}%`, pct: vipPct, colorClass: 'seg-gold' },
+      { label: 'Active', value: `${activeCount} clients · ${activePct}%`, pct: activePct, colorClass: 'seg-green' },
+      { label: 'Inactive', value: `${inactiveCount} clients · ${inactivePct}%`, pct: inactivePct, colorClass: 'seg-blue' },
+    ];
+  });
+
+  // Computed State
+  public filteredClients = computed(() => {
+    return this.clients().filter((c) => {
+      const matchFilter = this.activeFilter() === 'all' || c.status === this.activeFilter();
+      const matchSearch =
+        c.name?.toLowerCase().includes(this.searchQuery().toLowerCase()) ||
+        c.email?.toLowerCase().includes(this.searchQuery().toLowerCase());
+      return matchFilter && matchSearch;
+    });
+  });
+  public stats = computed(() => [
+    { label: 'Total Clients', value: this.clients().length.toString(), change: 'Live', up: true },
+    {
+      label: 'VIP Members',
+      value: this.clients()
+        .filter((c) => c.status === 'vip')
+        .length.toString(),
+      change: 'Live',
+      up: true,
+    },
+    {
+      label: 'Active',
+      value: this.clients()
+        .filter((c) => c.status === 'active')
+        .length.toString(),
+      change: 'Live',
+      up: true,
+    },
+    {
+      label: 'Inactive',
+      value: this.clients()
+        .filter((c) => c.status === 'inactive')
+        .length.toString(),
+      change: 'Live',
+      up: false,
+    },
+  ]);
 }
