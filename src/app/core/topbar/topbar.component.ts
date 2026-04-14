@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { MatIcon } from '@angular/material/icon';
 import { NotificationComponent } from '../notification/notification.component';
-import { AppAuthService } from '../../services/auth.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'rentcar-topbar',
@@ -20,7 +20,7 @@ export class TopbarComponent {
   @Input() public searchText = '';
   @Output() public searchChange = new EventEmitter<string>();
 
-  public auth = inject(AppAuthService);
+  public auth = inject(AuthService);
   public router = inject(Router);
 
   public isNotificationOpen = false;

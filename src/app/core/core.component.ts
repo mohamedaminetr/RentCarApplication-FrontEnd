@@ -1,7 +1,7 @@
 import { CommonModule, AsyncPipe } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
-import { AppAuthService } from '../services/auth.service';
+import { AuthService } from '../services/auth.service';
 import { MatIconModule } from '@angular/material/icon';
 import { filter } from 'rxjs/operators';
 import { VehicleService } from '../services/vehicle.service';
@@ -55,7 +55,7 @@ export class CoreComponent implements OnInit {
     { id: 'settings', label: 'Settings', route: '/settings', badge: null, icon: 'settings' },
   ]);
 
-  public auth = inject(AppAuthService);
+  public auth = inject(AuthService);
   public router = inject(Router);
 
   public async ngOnInit(): Promise<void> {

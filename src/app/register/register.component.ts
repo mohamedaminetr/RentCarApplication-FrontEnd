@@ -2,7 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
-import { AppAuthService } from '../services/auth.service';
+import { AuthService } from '../services/auth.service';
 import { email, minLength, required, form, FormField } from '@angular/forms/signals';
 import { ReactiveFormsModule } from '@angular/forms';
 
@@ -11,10 +11,10 @@ import { ReactiveFormsModule } from '@angular/forms';
   standalone: true,
   imports: [CommonModule, MatIconModule, FormField, ReactiveFormsModule, RouterModule],
   templateUrl: './register.component.html',
-  styleUrls: ['./register.component.scss']
+  styleUrls: ['./register.component.scss'],
 })
 export class RegisterComponent {
-  private authService = inject(AppAuthService);
+  private authService = inject(AuthService);
   private router = inject(Router);
 
   public isLoading = signal(false);
@@ -24,7 +24,7 @@ export class RegisterComponent {
     firstName: '',
     lastName: '',
     email: '',
-    password: ''
+    password: '',
   });
 
   public registerForm = form(this.registerModel, (f) => {

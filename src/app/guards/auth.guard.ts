@@ -1,10 +1,10 @@
 import { inject } from '@angular/core';
 import { Router, CanActivateFn } from '@angular/router';
-import { AppAuthService } from '../services/auth.service';
+import { AuthService } from '../services/auth.service';
 import { PersistenceService } from '../services/persistence.service';
 
 export const authGuard: CanActivateFn = (route, state) => {
-  const authService = inject(AppAuthService);
+  const authService = inject(AuthService);
   const router = inject(Router);
   const persistence = inject(PersistenceService);
 

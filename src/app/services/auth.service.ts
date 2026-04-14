@@ -14,7 +14,7 @@ export interface Credentials {
 }
 
 @Injectable({ providedIn: 'root' })
-export class AppAuthService extends BaseApiService {
+export class AuthService extends BaseApiService {
   private persistence = inject(PersistenceService);
   private router = inject(Router);
 

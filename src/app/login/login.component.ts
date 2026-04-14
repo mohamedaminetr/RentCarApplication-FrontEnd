@@ -2,7 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
-import { AppAuthService, Credentials } from '../services/auth.service';
+import { AuthService, Credentials } from '../services/auth.service';
 import { email, form, FormField, required } from '@angular/forms/signals';
 import { ReactiveFormsModule } from '@angular/forms';
 
@@ -13,7 +13,7 @@ import { ReactiveFormsModule } from '@angular/forms';
   imports: [CommonModule, MatIconModule, FormField, ReactiveFormsModule, RouterModule],
 })
 export class LoginComponent {
-  public authService = inject(AppAuthService);
+  public authService = inject(AuthService);
   public router = inject(Router);
   public isLoading = signal(false);
   public error = signal<string | null>(null);

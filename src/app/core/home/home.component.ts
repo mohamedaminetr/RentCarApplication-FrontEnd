@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule, TitleCasePipe } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
-import { AppAuthService } from '../../services/auth.service';
+import { AuthService } from '../../services/auth.service';
 import { MatIcon } from '@angular/material/icon';
 import { TopbarComponent } from '../topbar/topbar.component';
 import { BookingService } from '../../services/booking.service';
@@ -18,7 +18,7 @@ import { computed, signal, OnInit } from '@angular/core';
 })
 export class HomeComponent implements OnInit {
   public router = inject(Router);
-  public auth = inject(AppAuthService);
+  public auth = inject(AuthService);
   private bookingService = inject(BookingService);
   private vehicleService = inject(VehicleService);
 

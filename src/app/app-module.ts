@@ -9,21 +9,13 @@ import { CommonModule } from '@angular/common';
 import { authInterceptor } from './interceptors/auth.interceptor';
 
 import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 @NgModule({
   declarations: [App],
-  imports: [
-    BrowserModule,
-    CommonModule,
-    MatIconModule,
-    MatSnackBarModule,
-    AppRoutingModule,
-  ],
+  imports: [BrowserModule, CommonModule, MatIconModule, MatSnackBarModule, AppRoutingModule],
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideHttpClient(withInterceptors([authInterceptor])),
-    provideAnimationsAsync(),
   ],
   bootstrap: [App],
 })
