@@ -1,0 +1,55 @@
+<div class="shell">
+  <div class="bg-layer"></div>
+  <main class="main">
+    <rentcar-topbar title="Calendar" eyebrow="Booking Schedule"></rentcar-topbar>
+
+    <div class="content">
+      <div class="calendar-header panel">
+        <div class="month-selector">
+          <h2>{{ monthNames[currentDate().getMonth()] }} {{ currentDate().getFullYear() }}</h2>
+          <div class="nav-btns">
+            <button class="nav-btn" (click)="prevMonth()">
+              <mat-icon>chevron_left</mat-icon>
+            </button>
+            <button class="nav-btn today-btn" (click)="goToToday()">Today</button>
+            <button class="nav-btn" (click)="nextMonth()">
+              <mat-icon>chevron_right</mat-icon>
+            </button>
+          </div>
+        </div>
+        <div class="calendar-legend">
+          <div class="legend-item"><span class="dot dot-confirmed"></span> Confirmed</div>
+          <div class="legend-item"><span class="dot dot-pending"></span> Pending</div>
+        </div>
+      </div>
+
+      <div class="calendar-grid panel">
+        <div class="days-header">
+          <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+        </div>
+        <div class="days-grid">
+          @for (day of daysInMonth(); track $index) {
+            <div 
+              class="day-cell" 
+              [class.not-current]="!day.currentMonth"
+              [class.today]="isToday(day.date)"
+            >
+              <span class="day-num">{{ day.day }}</span>
+              <div class="day-bookings">
+                @for (booking of getBookingsForDate(day.date); track booking.id) {
+                  <div 
+                    class="booking-tag" 
+                    [class]="booking.status.toLowerCase()"
+                    (click)="viewBooking(booking)"
+                  >
+                    {{ booking.vehicleName }}
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

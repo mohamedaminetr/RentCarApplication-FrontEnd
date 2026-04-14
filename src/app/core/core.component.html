@@ -25,7 +25,7 @@
     <div class="nav-section">
       <p class="nav-label">Main</p>
 
-      @for (item of navItems; track item.id) {
+      @for (item of navItems(); track item.id) {
         @if (item.id === 'revenue') {
           <div class="sidebar-divider"></div>
           <p class="nav-label">Finance</p>

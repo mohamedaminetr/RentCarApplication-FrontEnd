@@ -25,9 +25,16 @@ import { ClientService } from '../services/client.service';
 export class ClientsComponent implements OnInit {
   public clientService = inject(ClientService);
   public router = inject(Router);
+  public Math = Math;
   public clients = signal<Client[]>([]);
-  public currentPage = 1;
-  public pages = [1, 2, 3];
+  public currentPage = signal<number>(1);
+  public pageSize = 10;
+  
+  public pages = computed(() => {
+    const total = this.filteredClients().length;
+    const count = Math.ceil(total / this.pageSize) || 1;
+    return Array.from({ length: count }, (_, i) => i + 1);
+  });
   public miniBarHeights = [30, 20, 36, 24, 40, 28, 48];
   public activeFilter = signal<'all' | 'vip' | 'active' | 'inactive'>('all');
   public searchQuery = signal<string>('');
@@ -154,6 +161,11 @@ export class ClientsComponent implements OnInit {
         c.email?.toLowerCase().includes(this.searchQuery().toLowerCase());
       return matchFilter && matchSearch;
     });
+  });
+
+  public pagedClients = computed(() => {
+    const start = (this.currentPage() - 1) * this.pageSize;
+    return this.filteredClients().slice(start, start + this.pageSize);
   });
   public stats = computed(() => [
     { label: 'Total Clients', value: this.clients().length.toString(), change: 'Live', up: true },

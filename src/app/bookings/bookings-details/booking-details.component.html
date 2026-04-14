@@ -115,9 +115,9 @@
               <mat-icon class="field-icon">calendar_today</mat-icon>
               <input
                 class="field-input"
-                type="text"
-                placeholder="12 Aug, 10:00"
+                type="date"
                 [formField]="bookingForm.pickup"
+                (change)="handleDateChange()"
               />
             </div>
           </div>
@@ -127,9 +127,9 @@
               <mat-icon class="field-icon">event_available</mat-icon>
               <input
                 class="field-input"
-                type="text"
-                placeholder="15 Aug, 10:00"
+                type="date"
                 [formField]="bookingForm.returnDate"
+                (change)="handleDateChange()"
               />
             </div>
           </div>
@@ -147,14 +147,20 @@
             </div>
           </div>
           <div class="form-field">
-            <label class="field-label">Amount</label>
+            <label class="field-label">
+              Amount
+              <span style="font-size: 10px; opacity: 0.5; margin-left: 4px; font-weight: 400">
+                (auto: days × rate/day)
+              </span>
+            </label>
             <div class="field-wrap">
               <mat-icon class="field-icon">attach_money</mat-icon>
               <input
                 class="field-input"
                 type="text"
-                placeholder="$0"
+                placeholder="Select vehicle &amp; dates"
                 [formField]="bookingForm.amount"
+                style="cursor: default; opacity: 0.85"
               />
             </div>
           </div>

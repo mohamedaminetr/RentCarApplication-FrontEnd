@@ -71,12 +71,50 @@ export class BookingDetailsComponent implements OnInit {
     return 'delete_forever';
   }
 
-  public handleVehicleSelect(e: Event) {
+  // Stores the rate/day of the currently selected vehicle.
+  // Used to auto-calculate: amount = numberOfDays × ratePerDay
+  private selectedRatePerDay: number = 0;
+
+  public handleVehicleSelect(e: Event): void {
     const p = (e.target as HTMLSelectElement).value;
     const vehicle = this.vehicles.find((v) => v.plate === p);
     if (vehicle) {
+      this.selectedRatePerDay = vehicle.ratePerDay ?? 0;
       this.newBooking.update((b) => ({ ...b, vehicleName: vehicle.name, plate: vehicle.plate }));
+      this.recalculateAmount();
     }
+  }
+
+  public handleDateChange(): void {
+    this.recalculateAmount();
+  }
+
+  /**
+   * Auto-calculates the booking amount from dates and vehicle rate.
+   *
+   * Formula:
+   *   numberOfDays = ceil((returnDate - pickupDate) / milliseconds_per_day)
+   *   amount       = numberOfDays × ratePerDay
+   *
+   * Where:
+   *   ratePerDay  = vehicle.ratePerDay  (set in the Vehicles page, stored in DB)
+   *   amount      = the total cost of the rental shown to the user
+   *
+   * Note: Uses Math.ceil so a partial day is billed as a full day.
+   */
+  private recalculateAmount(): void {
+    const b = this.newBooking();
+    if (!b.pickup || !b.returnDate || this.selectedRatePerDay <= 0) return;
+
+    const pickupMs  = new Date(b.pickup).getTime();
+    const returnMs  = new Date(b.returnDate).getTime();
+    if (isNaN(pickupMs) || isNaN(returnMs) || returnMs <= pickupMs) return;
+
+    const MS_PER_DAY   = 1000 * 60 * 60 * 24;
+    const numberOfDays = Math.ceil((returnMs - pickupMs) / MS_PER_DAY);
+    const amount       = (numberOfDays * this.selectedRatePerDay).toFixed(2);
+
+    this.newBooking.update((b) => ({ ...b, amount }));
   }
 
   onCancel() {

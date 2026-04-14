@@ -79,7 +79,7 @@
         @if (isLoading()) {
           <div class="loading-state">Loading clients...</div>
         } @else {
-          @for (client of filteredClients(); track client.email) {
+          @for (client of pagedClients(); track client.email) {
             <div class="client-row">
               <div class="td">
                 <div class="client-info">
@@ -140,19 +140,33 @@
 
         <!-- PAGINATION -->
         <div class="pagination">
-          <span class="page-info">Showing {{ filteredClients().length }} clients</span>
+          <span class="page-info">
+            Showing {{ (currentPage() - 1) * pageSize + 1 }} - 
+            {{ Math.min(currentPage() * pageSize, filteredClients().length) }} 
+            of {{ filteredClients().length }} clients
+          </span>
           <div class="page-btns">
-            <!-- <div class="page-btn">‹</div>
-            @for (page of pages; track page) {
+            <div 
+              class="page-btn" 
+              [class.disabled]="currentPage() === 1"
+              (click)="currentPage() > 1 && currentPage.set(currentPage() - 1)"
+            >‹</div>
+            
+            @for (page of pages(); track page) {
               <div
                 class="page-btn"
-                [class.active]="currentPage === page"
-                (click)="currentPage = page"
+                [class.active]="currentPage() === page"
+                (click)="currentPage.set(page)"
               >
                 {{ page }}
               </div>
             }
-            <div class="page-btn">›</div> -->
+            
+            <div 
+              class="page-btn" 
+              [class.disabled]="currentPage() === pages().length"
+              (click)="currentPage() < pages().length && currentPage.set(currentPage() + 1)"
+            >›</div>
           </div>
         </div>
       </div>

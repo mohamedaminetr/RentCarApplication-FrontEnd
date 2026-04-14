@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { AppAuthService, Credentials } from '../services/auth.service';
 import { email, form, FormField, required } from '@angular/forms/signals';
@@ -10,7 +10,7 @@ import { ReactiveFormsModule } from '@angular/forms';
   selector: 'rentcar-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
-  imports: [CommonModule, MatIconModule, FormField, ReactiveFormsModule],
+  imports: [CommonModule, MatIconModule, FormField, ReactiveFormsModule, RouterModule],
 })
 export class LoginComponent {
   public authService = inject(AppAuthService);
