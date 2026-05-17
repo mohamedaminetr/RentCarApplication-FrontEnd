@@ -9,6 +9,7 @@ import { TopbarComponent } from '../topbar/topbar.component';
 import { VehicleService, VehicleFilter } from '../../services/vehicle.service';
 import { Vehicle, VehicleStatus } from '../../models/vehicle.model';
 import { VehicleDetailsComponent } from './vehicle-details/vehicle-details.component';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'rentcar-vehicle',
@@ -121,6 +122,7 @@ export class VehicleComponent implements OnInit {
   }
 
   public snackBar = inject(MatSnackBar);
+  public notificationService = inject(NotificationService);
 
   public async onVehicleAdd(vehicle: any): Promise<void> {
     try {
@@ -128,6 +130,7 @@ export class VehicleComponent implements OnInit {
       this.vehicles.update((list) => [newVehicle, ...list]);
       this.showAddModal = false;
       this.snackBar.open('Vehicle added successfully!', 'Close', { duration: 3000 });
+      this.notificationService.add('New Vehicle Added', `Vehicle ${newVehicle.name} has been added.`, 'success', 'directions_car');
     } catch (err) {
       this.error.set('Failed to add vehicle');
     }

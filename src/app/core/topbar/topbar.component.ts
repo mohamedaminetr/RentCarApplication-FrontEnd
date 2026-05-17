@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { MatIcon } from '@angular/material/icon';
 import { NotificationComponent } from '../notification/notification.component';
 import { AuthService } from '../../services/auth.service';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'rentcar-topbar',
@@ -22,6 +23,7 @@ export class TopbarComponent {
 
   public auth = inject(AuthService);
   public router = inject(Router);
+  public notificationService = inject(NotificationService);
 
   public isNotificationOpen = false;
 

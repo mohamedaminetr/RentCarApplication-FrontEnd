@@ -42,7 +42,12 @@ export class RegisterComponent {
     this.error.set(null);
 
     try {
-      await this.authService.register(this.registerForm().value);
+      await this.authService.register({
+        firstName: this.registerForm.firstName().value(),
+        lastName: this.registerForm.lastName().value(),
+        email: this.registerForm.email().value(),
+        password: this.registerForm.password().value(),
+      });
       this.isLoading.set(false);
       this.router.navigate(['/login'], { queryParams: { registered: true } });
     } catch (err: any) {

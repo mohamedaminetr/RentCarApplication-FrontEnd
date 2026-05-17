@@ -5,27 +5,65 @@
 
     <div class="content">
       <div class="vehicle-grid" style="grid-template-columns: repeat(2, 1fr)">
-        <div class="vehicle-card">
+        <div class="vehicle-card" style="position: relative;">
+          @if (isLoading()) {
+            <div class="loading-overlay" style="position: absolute; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,0.5); z-index:10; display:flex; align-items:center; justify-content:center; border-radius: 12px;">
+              <span style="color: white">Saving...</span>
+            </div>
+          }
           <div class="vehicle-header">
             <mat-icon style="color: var(--gold); vertical-align: middle">account_circle</mat-icon>
-            <span class="badge badge-active">Active</span>
+            <span class="badge badge-active">{{ authService.currentUser()?.role | titlecase }}</span>
           </div>
           <div class="vehicle-name">Account Details</div>
           <div class="vehicle-type">Manage your profile and preferences</div>
-          <div class="vehicle-meta">
-            <div>
-              <div class="meta-label">Email</div>
-              <div class="meta-value">manager@rentcar.com</div>
+          
+          @if (!isEditing()) {
+            <div class="vehicle-meta">
+              <div>
+                <div class="meta-label">Name</div>
+                <div class="meta-value">{{ authService.currentUser()?.firstName }} {{ authService.currentUser()?.lastName }}</div>
+              </div>
+              <div>
+                <div class="meta-label">Email</div>
+                <div class="meta-value">{{ authService.currentUser()?.email }}</div>
+              </div>
+              <div style="margin-top: 15px">
+                <div class="meta-label">Phone</div>
+                <div class="meta-value">{{ authService.currentUser()?.phone || 'Not provided' }}</div>
+              </div>
             </div>
-            <div>
-              <div class="meta-label">Role</div>
-              <div class="meta-value">Administrator</div>
+            <div class="vehicle-actions">
+              <button class="action-primary" (click)="toggleEdit()">Edit Profile</button>
             </div>
-          </div>
-          <div class="vehicle-actions">
-            <button class="action-secondary">Edit Profile</button>
-            <button class="action-primary">Change Password</button>
-          </div>
+          } @else {
+            <div class="form-grid" style="margin-top: 20px; display: grid; gap: 15px;">
+              <div class="form-group">
+                <label>First Name</label>
+                <input type="text" [formField]="profileForm.firstName" class="form-control" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); color: white; margin-top: 5px;">
+              </div>
+              <div class="form-group">
+                <label>Last Name</label>
+                <input type="text" [formField]="profileForm.lastName" class="form-control" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); color: white; margin-top: 5px;">
+              </div>
+              <div class="form-group">
+                <label>Email</label>
+                <input type="email" [formField]="profileForm.email" class="form-control" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); color: white; margin-top: 5px;">
+              </div>
+              <div class="form-group">
+                <label>Phone</label>
+                <input type="text" [formField]="profileForm.phone" class="form-control" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); color: white; margin-top: 5px;">
+              </div>
+              <div class="form-group">
+                <label>Change Password (Optional)</label>
+                <input type="password" [formField]="profileForm.password" class="form-control" placeholder="Leave blank to keep current" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); color: white; margin-top: 5px;">
+              </div>
+            </div>
+            <div class="vehicle-actions" style="margin-top: 20px; display: flex; gap: 10px;">
+              <button class="action-primary" (click)="saveProfile()" [disabled]="profileForm().invalid() || isLoading()">Save Changes</button>
+              <button class="action-secondary" (click)="toggleEdit()">Cancel</button>
+            </div>
+          }
         </div>
 
         <div class="vehicle-card">

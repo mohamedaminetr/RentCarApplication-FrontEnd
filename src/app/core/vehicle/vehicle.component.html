@@ -124,7 +124,7 @@
                       [class.date-warning]="vehicle.returnDate"
                       [class.date-ok]="vehicle.readyDate"
                     >
-                      {{ vehicle.returnDate ?? vehicle.readyDate ?? vehicle.fuel }}
+                      {{ vehicle.returnDate || vehicle.readyDate || vehicle.fuel }}
                     </div>
                   </div>
                 </div>

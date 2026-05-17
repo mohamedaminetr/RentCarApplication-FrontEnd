@@ -9,6 +9,7 @@ import { VehicleService } from '../services/vehicle.service';
 import { ActivatedRoute } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Booking, DialogMode } from '../models/booking.model';
+import { NotificationService } from '../services/notification.service';
 
 @Component({
   selector: 'app-bookings',
@@ -88,6 +89,7 @@ export class BookingsComponent implements OnInit {
   }
 
   public snackBar = inject(MatSnackBar);
+  public notificationService = inject(NotificationService);
 
   public async onDialogSave(booking: any): Promise<void> {
     try {
@@ -97,12 +99,14 @@ export class BookingsComponent implements OnInit {
         const newBooking = await this.bookingService.createBooking(booking);
         this.bookings.update((list) => [...list, newBooking]);
         this.snackBar.open('Booking added successfully!', 'Close', { duration: 3000 });
+        this.notificationService.add('Booking Created', `New booking for ${booking.clientName}`, 'success', 'calendar_today');
       }
 
       if (this.dialogMode === 'edit' && this.selectedBooking && this.selectedBooking.id != null) {
         const updated = await this.bookingService.updateBooking(this.selectedBooking.id, booking);
         this.bookings.update((list) => list.map((b) => (b.id === updated.id ? updated : b)));
         this.snackBar.open('Booking updated successfully!', 'Close', { duration: 3000 });
+        this.notificationService.add('Booking Updated', `Booking #${updated.id} status is now ${updated.status}`, 'info', 'edit');
       }
 
       if (
