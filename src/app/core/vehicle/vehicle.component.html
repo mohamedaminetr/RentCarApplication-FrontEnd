@@ -12,18 +12,20 @@
     ></rentcar-topbar>
 
     <div class="content">
-      <!-- STATS -->
-      <div class="stats-grid">
-        @for (stat of stats(); track stat.label) {
-          <div class="stat-card">
-            <div class="stat-label">{{ stat.label }}</div>
-            <div class="stat-value">{{ stat.value }}</div>
-            <div class="stat-change" [class.up]="stat.up" [class.down]="!stat.up">
-              {{ stat.change }}
+      <!-- STATS (admin only) -->
+      @if (auth.currentUser()?.role === 'admin') {
+        <div class="stats-grid">
+          @for (stat of stats(); track stat.label) {
+            <div class="stat-card">
+              <div class="stat-label">{{ stat.label }}</div>
+              <div class="stat-value">{{ stat.value }}</div>
+              <div class="stat-change" [class.up]="stat.up" [class.down]="!stat.up">
+                {{ stat.change }}
+              </div>
             </div>
-          </div>
-        }
-      </div>
+          }
+        </div>
+      }
 
       <!-- TOOLBAR -->
       <div class="toolbar">
@@ -37,24 +39,24 @@
           </button>
           <button
             class="filter-btn"
-            [class.active]="activeFilter() === 'available'"
-            (click)="activeFilter.set('available')"
+            [class.active]="activeFilter() === 'Available'"
+            (click)="activeFilter.set('Available')"
           >
             Available
           </button>
           <button
             class="filter-btn"
-            [class.active]="activeFilter() === 'rented'"
-            (click)="activeFilter.set('rented')"
+            [class.active]="activeFilter() === 'Rented'"
+            (click)="activeFilter.set('Rented')"
           >
             Rented
           </button>
           <button
             class="filter-btn"
-            [class.active]="activeFilter() === 'service'"
-            (click)="activeFilter.set('service')"
+            [class.active]="activeFilter() === 'Maintenance'"
+            (click)="activeFilter.set('Maintenance')"
           >
-            Service
+            Maintenance
           </button>
         </div>
         <div style="display: flex; gap: 10px; align-items: center">
@@ -68,10 +70,12 @@
               >
             </div>
           </div>
-          <button class="add-btn" (click)="showAddModal = true">
-            <mat-icon style="font-size: 14px; width: 14px; height: 14px">add</mat-icon>
-            Add Vehicle
-          </button>
+          @if (auth.currentUser()?.role === 'admin') {
+            <button class="add-btn" (click)="showAddModal = true">
+              <mat-icon style="font-size: 14px; width: 14px; height: 14px">add</mat-icon>
+              Add Vehicle
+            </button>
+          }
         </div>
       </div>
 
@@ -86,7 +90,11 @@
                 <div class="vehicle-header">
                   <span class="vehicle-plate">{{ vehicle.plate }}</span>
                   <span class="badge" [class]="'badge-' + vehicle.status">
-                    {{ vehicle.status === 'service' ? 'Service' : (vehicle.status | titlecase) }}
+                    {{
+                      vehicle.status === 'Maintenance'
+                        ? 'Maintenance'
+                        : (vehicle.status | titlecase)
+                    }}
                   </span>
                 </div>
 
@@ -130,13 +138,10 @@
                 </div>
 
                 <div class="vehicle-actions">
-                  <button
-                    class="action-primary"
-                    (click)="router.navigate(['/vehicle', vehicle.id])"
-                  >
+                  <button class="action-primary" (click)="handlePrimaryAction(vehicle)">
                     {{ primaryAction(vehicle) }}
                   </button>
-                  @if (vehicle.status !== 'service') {
+                  @if (vehicle.status !== 'Maintenance') {
                     <button
                       class="action-secondary"
                       (click)="router.navigate(['/vehicle', vehicle.id])"
@@ -144,14 +149,16 @@
                       Details
                     </button>
                   }
-                  <button
-                    class="action-delete"
-                    (click)="selectVehicle(vehicle, 'view', true); $event.stopPropagation()"
-                  >
-                    <mat-icon style="font-size: 14px; width: 14px; height: 14px"
-                      >delete_outline</mat-icon
+                  @if (auth.currentUser()?.role === 'admin') {
+                    <button
+                      class="action-delete"
+                      (click)="selectVehicle(vehicle, 'view', true); $event.stopPropagation()"
                     >
-                  </button>
+                      <mat-icon style="font-size: 14px; width: 14px; height: 14px"
+                        >delete_outline</mat-icon
+                      >
+                    </button>
+                  }
                 </div>
               </div>
             }
@@ -170,59 +177,61 @@
         </div>
       }
 
-      <!-- BOTTOM ROW -->
-      <div class="bottom-row">
-        <!-- SERVICE SCHEDULE -->
-        <div class="panel panel-bottom">
-          <div class="panel-header">
-            <div>
-              <div class="panel-eyebrow">Upcoming</div>
-              <div class="panel-title">Service Schedule</div>
-            </div>
-            <span class="panel-link">View All</span>
-          </div>
-          @for (svc of serviceSchedule; track svc.name) {
-            <div class="svc-row">
-              <div class="svc-dot" [class]="svc.dotClass"></div>
-              <div class="svc-info">
-                <div class="svc-name">{{ svc.name }}</div>
-                <div class="svc-detail">{{ svc.detail }}</div>
+      <!-- BOTTOM ROW (admin only) -->
+      @if (auth.currentUser()?.role === 'admin') {
+        <div class="bottom-row">
+          <!-- SERVICE SCHEDULE -->
+          <div class="panel panel-bottom">
+            <div class="panel-header">
+              <div>
+                <div class="panel-eyebrow">Upcoming</div>
+                <div class="panel-title">Service Schedule</div>
               </div>
-              <div class="svc-date">{{ svc.date }}</div>
+              <span class="panel-link">View All</span>
             </div>
-          }
-        </div>
-
-        <!-- UTILIZATION -->
-        <div class="panel panel-bottom">
-          <div class="panel-header">
-            <div>
-              <div class="panel-eyebrow">This month</div>
-              <div class="panel-title">Utilization</div>
-            </div>
-          </div>
-          <div class="util-list">
-            @for (v of utilization(); track v.id) {
-              <div class="util-item">
-                <div class="util-header">
-                  <span class="util-label">{{ v.name }}</span>
-                  <span class="util-val">{{ v.utilization }}%</span>
+            @for (svc of serviceSchedule; track svc.name) {
+              <div class="svc-row">
+                <div class="svc-dot" [class]="svc.dotClass"></div>
+                <div class="svc-info">
+                  <div class="svc-name">{{ svc.name }}</div>
+                  <div class="svc-detail">{{ svc.detail }}</div>
                 </div>
-                <div class="util-bar">
-                  <div
-                    class="util-fill"
-                    [class]="utilizationColor(v.utilization)"
-                    [style.width.%]="v.utilization"
-                  ></div>
-                </div>
+                <div class="svc-date">{{ svc.date }}</div>
               </div>
             }
           </div>
+
+          <!-- UTILIZATION -->
+          <div class="panel panel-bottom">
+            <div class="panel-header">
+              <div>
+                <div class="panel-eyebrow">This month</div>
+                <div class="panel-title">Utilization</div>
+              </div>
+            </div>
+            <div class="util-list">
+              @for (v of utilization(); track v.id) {
+                <div class="util-item">
+                  <div class="util-header">
+                    <span class="util-label">{{ v.name }}</span>
+                    <span class="util-val">{{ v.utilization }}%</span>
+                  </div>
+                  <div class="util-bar">
+                    <div
+                      class="util-fill"
+                      [class]="utilizationColor(v.utilization)"
+                      [style.width.%]="v.utilization"
+                    ></div>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
         </div>
-      </div>
+      }
     </div>
 
-    @if (showAddModal || viewModeDetails === 'edit') {
+    @if (auth.currentUser()?.role === 'admin' && (showAddModal || viewModeDetails === 'edit')) {
       <app-add-vehicle
         [mode]="viewModeDetails === 'edit' ? 'edit' : 'add'"
         [vehicle]="viewModeDetails === 'edit' ? selectedVehicle : null"
@@ -238,10 +247,12 @@
     @if (selectedVehicle && viewModeDetails === 'view') {
       <app-vehicle-details
         [vehicle]="selectedVehicle"
-        [isConfirming]="isDeleting"
+        [isConfirming]="auth.currentUser()?.role === 'admin' ? isDeleting : false"
         (close)="closeDetails()"
-        (deleteVehicle)="onVehicleDelete($event)"
-        (edit)="selectVehicle(selectedVehicle, 'edit')"
+        (deleteVehicle)="auth.currentUser()?.role === 'admin' ? onVehicleDelete($event) : null"
+        (edit)="
+          auth.currentUser()?.role === 'admin' ? selectVehicle(selectedVehicle, 'edit') : null
+        "
       ></app-vehicle-details>
     }
   </main>

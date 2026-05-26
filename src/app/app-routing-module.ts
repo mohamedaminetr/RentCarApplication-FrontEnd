@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from './login/login.component';
 import { CoreComponent } from './core/core.component';
-import { ClientsComponent } from './clients/clients.component';
 import { HomeComponent } from './core/home/home.component';
 import { BookingsComponent } from './bookings/bookings.component';
 import { RevenueComponent } from './core/revenue/revenue.component';
@@ -34,7 +33,6 @@ export const routes: Routes = [
     component: CoreComponent,
     children: [
       { path: 'home', component: HomeComponent },
-      { path: 'clients', component: ClientsComponent },
       { path: 'vehicles', component: VehicleComponent },
       { path: 'bookings', component: BookingsComponent },
       { path: 'revenue', component: RevenueComponent },

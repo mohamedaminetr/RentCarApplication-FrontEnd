@@ -1,5 +1,6 @@
 export class Client {
-  id: number = 0;
+  id: any = 0;
+  _id?: string;
   initials: string = '';
   name: string = '';
   email: string = '';

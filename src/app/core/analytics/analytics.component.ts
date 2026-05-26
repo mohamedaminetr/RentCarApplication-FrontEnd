@@ -3,9 +3,7 @@ import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { TopbarComponent } from '../topbar/topbar.component';
 import { VehicleService } from '../../services/vehicle.service';
-import { ClientService } from '../../services/client.service';
 import { Vehicle } from '../../models/vehicle.model';
-import { Client } from '../../models/client.model';
 
 @Component({
   selector: 'app-analytics',
@@ -16,33 +14,25 @@ import { Client } from '../../models/client.model';
 })
 export class AnalyticsComponent implements OnInit {
   private vehicleService = inject(VehicleService);
-  private clientService = inject(ClientService);
 
   public vehicles = signal<Vehicle[]>([]);
-  public clients = signal<Client[]>([]);
 
   public async ngOnInit(): Promise<void> {
-    const vTask = this.vehicleService.getVehicles();
-    const cTask = this.clientService.getClients();
-    
-    const [v, c] = await Promise.all([vTask, cTask]);
+    const v = await this.vehicleService.getVehicles();
     this.vehicles.set(v);
-    this.clients.set(c);
   }
 
   public stats = computed(() => {
     const v = this.vehicles();
-    const c = this.clients();
 
-    const activeUsers = c.filter(client => client.status === 'active' || client.status === 'vip').length;
     const totalUtilization = v.reduce((sum, vec) => sum + vec.utilization, 0);
     const avgUtilization = v.length > 0 ? Math.round(totalUtilization / v.length) : 0;
 
     return {
       utilization: avgUtilization + '%',
-      activeUsers: activeUsers.toString(),
-      duration: '4.2 Days', // This technically needs historical booking data length, keeping mocked placeholder structure
-      satisfaction: '4.8/5', // Review system mock
+      activeUsers: '12', // Placeholder since clients table is gone
+      duration: '4.2 Days', 
+      satisfaction: '4.8/5', 
     };
   });
 

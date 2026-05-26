@@ -9,7 +9,7 @@ export class ClientService extends BaseApiService {
     return await firstValueFrom(this.get<Client[]>('/clients'));
   }
 
-  async getClientById(id: number): Promise<Client> {
+  async getClientById(id: any): Promise<Client> {
     return await firstValueFrom(this.get<Client>(`/clients/${id}`));
   }
 
@@ -17,11 +17,11 @@ export class ClientService extends BaseApiService {
     return await firstValueFrom(this.post<Client>('/clients', client));
   }
 
-  async updateClient(id: number, client: Partial<Client>): Promise<Client> {
+  async updateClient(id: any, client: Partial<Client>): Promise<Client> {
     return await firstValueFrom(this.put<Client>(`/clients/${id}`, client));
   }
 
-  async deleteClient(id: number): Promise<any> {
+  async deleteClient(id: any): Promise<any> {
     return await firstValueFrom(this.delete<any>(`/clients/${id}`));
   }
 }

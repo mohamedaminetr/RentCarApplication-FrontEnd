@@ -28,7 +28,7 @@ export class RevenueComponent implements OnInit {
 
     b.forEach((bk) => {
       const amt = parseFloat(String(bk.amount).replace(/[^0-9.-]+/g, '')) || 0;
-      if (bk.status === 'Completed' || bk.status === 'Confirmed') {
+      if (bk.status === 'Completed' || bk.status === 'Approved') {
         totalRevenue += amt;
       } else if (bk.status === 'Pending') {
         pending += amt;
@@ -38,7 +38,7 @@ export class RevenueComponent implements OnInit {
     const netProfit = totalRevenue * 0.65; // Simulated 65% margin
     const avgBooking =
       totalRevenue /
-      (b.filter((bk) => bk.status === 'Completed' || bk.status === 'Confirmed').length || 1);
+      (b.filter((bk) => bk.status === 'Completed' || bk.status === 'Approved').length || 1);
 
     return {
       revenue: '$' + totalRevenue.toLocaleString(),

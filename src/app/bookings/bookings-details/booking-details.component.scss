@@ -352,6 +352,14 @@
       color: rgba(245, 240, 232, 0.88);
     }
   }
+
+  &.readonly-box {
+    cursor: default;
+    opacity: 0.85;
+    display: flex;
+    align-items: center;
+    min-height: 40px;
+  }
 }
 
 // ── Badges ────────────────────────────────────────────────────────────────────

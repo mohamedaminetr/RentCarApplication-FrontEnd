@@ -35,7 +35,6 @@ export class ClientsComponent implements OnInit {
     const count = Math.ceil(total / this.pageSize) || 1;
     return Array.from({ length: count }, (_, i) => i + 1);
   });
-  public miniBarHeights = [30, 20, 36, 24, 40, 28, 48];
   public activeFilter = signal<'all' | 'vip' | 'active' | 'inactive'>('all');
   public searchQuery = signal<string>('');
   public selectedClient: Client | null = null;

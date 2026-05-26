@@ -1,7 +1,8 @@
-export type VehicleStatus = 'available' | 'rented' | 'service';
+export type VehicleStatus = 'Available' | 'Reserved' | 'Rented' | 'Maintenance';
 
 export class Vehicle {
-  public id: number = 0;
+  public id: any = 0;
+  public _id?: string;
   public plate: string = '';
   public name: string = '';
   public type: string = '';
@@ -9,7 +10,7 @@ export class Vehicle {
   public ratePerDay: number = 0;
   public mileage: number = 0;
   public fuel: string = '';
-  public status: VehicleStatus = 'available';
+  public status: VehicleStatus = 'Available';
   public utilization: number = 0;
   public image: string = '';
   public returnDate: string = '';

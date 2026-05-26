@@ -10,6 +10,7 @@ import { VehicleService, VehicleFilter } from '../../services/vehicle.service';
 import { Vehicle, VehicleStatus } from '../../models/vehicle.model';
 import { VehicleDetailsComponent } from './vehicle-details/vehicle-details.component';
 import { NotificationService } from '../../services/notification.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'rentcar-vehicle',
@@ -28,6 +29,7 @@ import { NotificationService } from '../../services/notification.service';
 export class VehicleComponent implements OnInit {
   private vehicleService = inject(VehicleService);
   public router = inject(Router);
+  public auth = inject(AuthService);
 
   // State
   public vehicles = signal<Vehicle[]>([]);
@@ -38,8 +40,15 @@ export class VehicleComponent implements OnInit {
 
   // Computed
   public filteredVehicles = computed(() => {
+    let vehicles = this.vehicles();
+
+    // If client, only show Available cars
+    if (this.auth.currentUser()?.role === 'client') {
+      vehicles = vehicles.filter((v) => v.status === 'Available');
+    }
+
     const filtered = this.vehicleService.filterVehicles(
-      this.vehicles(),
+      vehicles,
       this.activeFilter(),
       this.searchQuery(),
     );
@@ -130,13 +139,18 @@ export class VehicleComponent implements OnInit {
       this.vehicles.update((list) => [newVehicle, ...list]);
       this.showAddModal = false;
       this.snackBar.open('Vehicle added successfully!', 'Close', { duration: 3000 });
-      this.notificationService.add('New Vehicle Added', `Vehicle ${newVehicle.name} has been added.`, 'success', 'directions_car');
+      this.notificationService.add(
+        'New Vehicle Added',
+        `Vehicle ${newVehicle.name} has been added.`,
+        'success',
+        'directions_car',
+      );
     } catch (err) {
       this.error.set('Failed to add vehicle');
     }
   }
 
-  public async onVehicleUpdate(id: number, vehicle: Partial<Vehicle>): Promise<void> {
+  public async onVehicleUpdate(id: any, vehicle: Partial<Vehicle>): Promise<void> {
     try {
       const updated = await this.vehicleService.updateVehicle(id, vehicle);
       this.vehicles.update((list) => list.map((v) => (v.id === id ? updated : v)));
@@ -147,7 +161,7 @@ export class VehicleComponent implements OnInit {
     }
   }
 
-  public async onVehicleDelete(id: number): Promise<void> {
+  public async onVehicleDelete(id: any): Promise<void> {
     try {
       await this.vehicleService.deleteVehicle(id);
       this.vehicles.update((list) => list.filter((v) => v.id !== id));
@@ -165,9 +179,17 @@ export class VehicleComponent implements OnInit {
     return 'fill-red';
   }
 
+  public handlePrimaryAction(v: Vehicle): void {
+    if (v.status === 'Available') {
+      this.router.navigate(['/bookings'], { queryParams: { action: 'new', plate: v.plate } });
+    } else {
+      this.router.navigate(['/vehicle', v.id]);
+    }
+  }
+
   public primaryAction(v: Vehicle): string {
-    if (v.status === 'available') return 'Rent Now';
-    if (v.status === 'rented') return 'View Rental';
+    if (v.status === 'Available') return 'Rent Now';
+    if (v.status === 'Rented') return 'View Rental';
     return 'View Service';
   }
 

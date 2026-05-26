@@ -13,7 +13,8 @@
 
     <!-- CONTENT -->
     <div class="content">
-      <!-- STATS -->
+      <!-- STATS (admin only) -->
+      @if (auth.currentUser()?.role === 'admin') {
       <div class="stats-grid">
         @for (stat of stats(); track stat.label) {
           <div class="stat-card">
@@ -25,10 +26,12 @@
           </div>
         }
       </div>
+      }
 
       <!-- MID ROW -->
       <div class="mid-row">
-        <!-- CHART -->
+        <!-- CHART (admin only) -->
+        @if (auth.currentUser()?.role === 'admin') {
         <div class="panel">
           <div class="panel-header">
             <div>
@@ -104,6 +107,7 @@
             <span class="chart-label">Apr</span>
           </div>
         </div>
+        }
 
         <!-- Vehicle STATUS -->
         <div class="panel">
@@ -132,8 +136,8 @@
                   <div class="vehicle-plate">{{ v.plate }}</div>
                 </div>
                 <span class="vehicle-status" [class]="v.status">
-                  @if (v.status === 'service') {
-                    Service
+                  @if (v.status === 'Maintenance') {
+                    Maintenance
                   } @else {
                     {{ v.status | titlecase }}
                   }
@@ -146,7 +150,8 @@
 
       <!-- BOTTOM ROW -->
       <div class="bottom-row">
-        <!-- RECENT BOOKINGS -->
+        <!-- RECENT BOOKINGS (admin only) -->
+        @if (auth.currentUser()?.role === 'admin') {
         <div class="panel">
           <div class="panel-header">
             <div>
@@ -171,6 +176,7 @@
             </div>
           }
         </div>
+        }
 
         <!-- QUICK ACTIONS -->
         <div class="panel">
@@ -181,7 +187,7 @@
             </div>
           </div>
           <div class="actions-grid">
-            @for (action of quickActions; track action.title) {
+            @for (action of filteredQuickActions(); track action.title) {
               <div
                 class="action-btn"
                 (click)="router.navigate([action.route], { queryParams: action.queryParams })"

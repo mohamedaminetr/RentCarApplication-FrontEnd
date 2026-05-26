@@ -18,7 +18,7 @@ export class VehicleService extends BaseApiService {
     return await firstValueFrom(this.get<Vehicle[]>('/vehicles'));
   }
 
-  public async getVehicleById(id: number): Promise<Vehicle> {
+  public async getVehicleById(id: any): Promise<Vehicle> {
     return await firstValueFrom(this.get<Vehicle>(`/vehicles/${id}`));
   }
 
@@ -26,15 +26,19 @@ export class VehicleService extends BaseApiService {
     return await firstValueFrom(this.post<Vehicle>('/vehicles', vehicle));
   }
 
-  public async updateVehicle(id: number, vehicle: Partial<Vehicle>): Promise<Vehicle> {
+  public async updateVehicle(id: any, vehicle: Partial<Vehicle>): Promise<Vehicle> {
     return await firstValueFrom(this.put<Vehicle>(`/vehicles/${id}`, vehicle));
   }
 
-  public async deleteVehicle(id: number): Promise<void> {
+  public async deleteVehicle(id: any): Promise<void> {
     await firstValueFrom(this.delete<any>(`/vehicles/${id}`));
   }
 
-  public filterVehicles(vehicles: Vehicle[], filter: VehicleFilter, searchQuery: string): Vehicle[] {
+  public filterVehicles(
+    vehicles: Vehicle[],
+    filter: VehicleFilter,
+    searchQuery: string,
+  ): Vehicle[] {
     return vehicles.filter((v) => {
       const matchFilter = filter === 'all' || v.status === filter;
       const matchSearch =
@@ -54,19 +58,25 @@ export class VehicleService extends BaseApiService {
       },
       {
         label: 'Available Now',
-        value: vehicles.filter((v) => v.status === 'available').length.toString(),
+        value: vehicles.filter((v) => v.status === 'Available').length.toString(),
         change: 'Live',
         up: true,
       },
       {
         label: 'Currently Rented',
-        value: vehicles.filter((v) => v.status === 'rented').length.toString(),
+        value: vehicles.filter((v) => v.status === 'Rented').length.toString(),
         change: 'Live',
         up: true,
       },
       {
-        label: 'In Service',
-        value: vehicles.filter((v) => v.status === 'service').length.toString(),
+        label: 'Reserved',
+        value: vehicles.filter((v) => v.status === 'Reserved').length.toString(),
+        change: 'Live',
+        up: true,
+      },
+      {
+        label: 'Maintenance',
+        value: vehicles.filter((v) => v.status === 'Maintenance').length.toString(),
         change: 'Live',
         up: false,
       },

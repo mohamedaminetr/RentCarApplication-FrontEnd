@@ -139,36 +139,38 @@
         }
 
         <!-- PAGINATION -->
-        <div class="pagination">
-          <span class="page-info">
-            Showing {{ (currentPage() - 1) * pageSize + 1 }} - 
-            {{ Math.min(currentPage() * pageSize, filteredClients().length) }} 
-            of {{ filteredClients().length }} clients
-          </span>
-          <div class="page-btns">
-            <div 
-              class="page-btn" 
-              [class.disabled]="currentPage() === 1"
-              (click)="currentPage() > 1 && currentPage.set(currentPage() - 1)"
-            >‹</div>
-            
-            @for (page of pages(); track page) {
-              <div
-                class="page-btn"
-                [class.active]="currentPage() === page"
-                (click)="currentPage.set(page)"
-              >
-                {{ page }}
-              </div>
-            }
-            
-            <div 
-              class="page-btn" 
-              [class.disabled]="currentPage() === pages().length"
-              (click)="currentPage() < pages().length && currentPage.set(currentPage() + 1)"
-            >›</div>
+        @if (filteredClients().length > 0) {
+          <div class="pagination">
+            <span class="page-info">
+              Showing {{ (currentPage() - 1) * pageSize + 1 }} - 
+              {{ Math.min(currentPage() * pageSize, filteredClients().length) }} 
+              of {{ filteredClients().length }} clients
+            </span>
+            <div class="page-btns">
+              <div 
+                class="page-btn" 
+                [class.disabled]="currentPage() === 1"
+                (click)="currentPage() > 1 && currentPage.set(currentPage() - 1)"
+              >‹</div>
+              
+              @for (page of pages(); track page) {
+                <div
+                  class="page-btn"
+                  [class.active]="currentPage() === page"
+                  (click)="currentPage.set(page)"
+                >
+                  {{ page }}
+                </div>
+              }
+              
+              <div 
+                class="page-btn" 
+                [class.disabled]="currentPage() === pages().length"
+                (click)="currentPage() < pages().length && currentPage.set(currentPage() + 1)"
+              >›</div>
+            </div>
           </div>
-        </div>
+        }
       </div>
 
       <!-- BOTTOM ROW -->
@@ -217,20 +219,6 @@
                 </div>
               </div>
             }
-          </div>
-          <div class="acquisition">
-            <div class="acq-header">
-              <div>
-                <div class="panel-title">Acquisition this month</div>
-                <div class="acq-value">12</div>
-                <div class="acq-change">↑ 33% vs last month</div>
-              </div>
-              <div class="mini-bars">
-                @for (h of miniBarHeights; track $index) {
-                  <div class="mini-bar" [class.mini-bar-active]="$last" [style.height.px]="h"></div>
-                }
-              </div>
-            </div>
           </div>
         </div>
       </div>

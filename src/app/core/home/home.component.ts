@@ -46,11 +46,11 @@ export class HomeComponent implements OnInit {
     const b = this.allBookings();
 
     const totalVehicles = v.length;
-    const activeRentals = v.filter((vec) => vec.status === 'rented').length;
+    const activeRentals = v.filter((vec) => vec.status === 'Rented').length;
 
     let totalRevenue = 0;
     b.forEach((bk) => {
-      if (bk.status === 'Completed' || bk.status === 'Confirmed') {
+      if (bk.status === 'Completed' || bk.status === 'Approved') {
         const amt = parseFloat(String(bk.amount).replace(/[^0-9.-]+/g, '')) || 0;
         totalRevenue += amt;
       }
@@ -126,6 +126,16 @@ export class HomeComponent implements OnInit {
     },
     { label: 'System', title: 'Settings', route: '/settings', queryParams: {}, icon: 'settings' },
   ];
+
+  public filteredQuickActions = computed(() => {
+    const role = this.auth.currentUser()?.role;
+    if (role === 'client') {
+      return this.quickActions.filter((a) =>
+        ['Add Booking', 'Calendar', 'Settings'].includes(a.title),
+      );
+    }
+    return this.quickActions;
+  });
 
   public selectVehicle(v: Vehicle): void {
     this.router.navigate(['/vehicles'], { queryParams: { vehicleId: v.id } });

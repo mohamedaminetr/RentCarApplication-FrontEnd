@@ -27,10 +27,17 @@
           </button>
           <button
             class="filter-btn"
-            [class.active]="currentFilter() === 'Confirmed'"
-            (click)="currentFilter.set('Confirmed')"
+            [class.active]="currentFilter() === 'Approved'"
+            (click)="currentFilter.set('Approved')"
           >
-            Confirmed
+            Approved
+          </button>
+          <button
+            class="filter-btn"
+            [class.active]="currentFilter() === 'Active'"
+            (click)="currentFilter.set('Active')"
+          >
+            Active
           </button>
           <button
             class="filter-btn"
@@ -41,10 +48,17 @@
           </button>
           <button
             class="filter-btn"
-            [class.active]="currentFilter() === 'Cancelled'"
-            (click)="currentFilter.set('Cancelled')"
+            [class.active]="currentFilter() === 'Canceled'"
+            (click)="currentFilter.set('Canceled')"
           >
-            Cancelled
+            Canceled
+          </button>
+          <button
+            class="filter-btn"
+            [class.active]="currentFilter() === 'Expired'"
+            (click)="currentFilter.set('Expired')"
+          >
+            Expired
           </button>
         </div>
         <button class="add-btn" (click)="openNewBooking()">
@@ -72,7 +86,6 @@
               <div class="avatar av-gold">{{ booking.initials }}</div>
               <div>
                 <div class="client-name">{{ booking.clientName }}</div>
-                <div class="client-email">{{ booking.bookingId }}</div>
               </div>
             </div>
             <div class="td">
@@ -85,20 +98,65 @@
               <span
                 class="badge"
                 [ngClass]="{
-                  'badge-active': booking.status === 'Confirmed',
+                  'badge-active': booking.status === 'Approved' || booking.status === 'Active',
                   'badge-vip': booking.status === 'Pending',
                   'badge-available': booking.status === 'Completed',
-                  'badge-inactive': booking.status === 'Cancelled',
+                  'badge-inactive': booking.status === 'Canceled' || booking.status === 'Expired',
                 }"
                 >{{ booking.status }}</span
               >
             </div>
             <div class="td td-amount" style="text-align: right">{{ booking.amount }}</div>
             <div class="td row-actions" style="justify-content: flex-end">
-              <div class="row-btn" (click)="openEditBooking(booking)">
+              <!-- Admin Actions -->
+              <ng-container *ngIf="authService.currentUser()?.role !== 'client'">
+                <div
+                  class="row-btn"
+                  *ngIf="booking.status === 'Pending'"
+                  (click)="onApproveBooking(booking)"
+                  title="Approve"
+                >
+                  <mat-icon style="font-size: 16px; width: 16px; height: 16px"
+                    >check_circle</mat-icon
+                  >
+                </div>
+                <div
+                  class="row-btn"
+                  *ngIf="booking.status === 'Approved'"
+                  (click)="onStartBooking(booking)"
+                  title="Start Trip"
+                >
+                  <mat-icon style="font-size: 16px; width: 16px; height: 16px">play_arrow</mat-icon>
+                </div>
+                <div
+                  class="row-btn"
+                  *ngIf="booking.status === 'Active'"
+                  (click)="onCompleteBooking(booking)"
+                  title="Complete"
+                >
+                  <mat-icon style="font-size: 16px; width: 16px; height: 16px">done_all</mat-icon>
+                </div>
+              </ng-container>
+
+              <!-- Common Actions -->
+              <div
+                class="row-btn"
+                *ngIf="['Pending', 'Approved', 'Active'].includes(booking.status)"
+                (click)="onCancelBooking(booking)"
+                title="Cancel"
+              >
+                <mat-icon style="font-size: 16px; width: 16px; height: 16px">close</mat-icon>
+              </div>
+
+              <div class="row-btn" (click)="openEditBooking(booking)" title="Edit">
                 <mat-icon style="font-size: 16px; width: 16px; height: 16px">edit</mat-icon>
               </div>
-              <div class="row-btn" (click)="openDeleteBooking(booking)">
+              <div
+                class="row-btn"
+                *ngIf="authService.currentUser()?.role !== 'client'"
+                (click)="openDeleteBooking(booking)"
+                title="Delete"
+              >
                 <mat-icon style="font-size: 16px; width: 16px; height: 16px">delete</mat-icon>
               </div>
             </div>
@@ -120,7 +178,6 @@
   <app-booking-details
     [mode]="dialogMode"
     [booking]="selectedBooking"
-    [clients]="clientsList()"
     [vehicles]="vehiclesList()"
     (close)="onDialogClose()"
     (save)="onDialogSave($event)"

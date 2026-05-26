@@ -43,11 +43,12 @@ export class RegisterComponent {
 
     try {
       await this.authService.register({
-        firstName: this.registerForm.firstName().value(),
-        lastName: this.registerForm.lastName().value(),
-        email: this.registerForm.email().value(),
-        password: this.registerForm.password().value(),
-      });
+          firstName: this.registerForm.firstName().value(),
+          lastName: this.registerForm.lastName().value(),
+          email: this.registerForm.email().value(),
+          password: this.registerForm.password().value(),
+          role: 'client',
+        });
       this.isLoading.set(false);
       this.router.navigate(['/login'], { queryParams: { registered: true } });
     } catch (err: any) {

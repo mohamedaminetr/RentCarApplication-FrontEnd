@@ -31,8 +31,7 @@
         </div>
         <p class="delete-headline">Remove this booking?</p>
         <p class="delete-sub">
-          You're about to permanently delete booking
-          <strong>{{ newBooking().bookingId }}</strong> for
+          You're about to permanently delete booking for
           <strong>{{ newBooking().clientName }}</strong
           >. This cannot be undone.
         </p>
@@ -48,10 +47,12 @@
           <span
             class="badge"
             [ngClass]="{
-              'badge-active': newBooking().status === 'Confirmed',
+              'badge-active':
+                newBooking().status === 'Approved' || newBooking().status === 'Active',
               'badge-vip': newBooking().status === 'Pending',
               'badge-available': newBooking().status === 'Completed',
-              'badge-inactive': newBooking().status === 'Cancelled',
+              'badge-inactive':
+                newBooking().status === 'Canceled' || newBooking().status === 'Expired',
             }"
             >{{ newBooking().status }}</span
           >
@@ -65,25 +66,20 @@
         <div class="form-row">
           <div class="form-field">
             <label class="field-label">Client Name</label>
-            <div class="field-wrap select-wrap">
-              <mat-icon class="field-icon">person</mat-icon>
-              <select class="field-input field-select" [formField]="bookingForm.clientName">
-                <option value="">Select a Client</option>
-                <option *ngFor="let c of clients" [value]="c.name">{{ c.name }}</option>
-              </select>
-              <mat-icon class="select-arrow">expand_more</mat-icon>
-            </div>
-          </div>
-          <div class="form-field">
-            <label class="field-label">Booking ID</label>
             <div class="field-wrap">
-              <mat-icon class="field-icon">tag</mat-icon>
-              <input
-                class="field-input"
-                type="text"
-                placeholder="BKG-0001"
-                [formField]="bookingForm.bookingId"
-              />
+              <mat-icon class="field-icon">person</mat-icon>
+              @if (!isNew) {
+                <div class="field-input readonly-box">
+                  {{ newBooking().clientName }}
+                </div>
+              } @else {
+                <input
+                  class="field-input"
+                  type="text"
+                  placeholder="Enter client name"
+                  [formField]="bookingForm.clientName"
+                />
+              }
             </div>
           </div>
         </div>
@@ -99,7 +95,7 @@
                 (change)="handleVehicleSelect($event)"
               >
                 <option value="">Select Vehicle</option>
-                <option *ngFor="let v of vehicles" [value]="v.plate">
+                <option *ngFor="let v of availableVehicles" [value]="v.plate">
                   {{ v.name }} - {{ v.plate }}
                 </option>
               </select>
@@ -138,12 +134,18 @@
         <div class="form-row">
           <div class="form-field">
             <label class="field-label">Status</label>
-            <div class="field-wrap select-wrap">
+            <div class="field-wrap" [class.select-wrap]="!isClientRole">
               <mat-icon class="field-icon">flag</mat-icon>
-              <select class="field-input field-select" [formField]="bookingForm.status">
-                <option *ngFor="let s of statusOptions" [value]="s">{{ s }}</option>
-              </select>
-              <mat-icon class="select-arrow">expand_more</mat-icon>
+              @if (isClientRole) {
+                <div class="field-input readonly-box">
+                  {{ newBooking().status }}
+                </div>
+              } @else {
+                <select class="field-input field-select" [formField]="bookingForm.status">
+                  <option *ngFor="let s of statusOptions" [value]="s">{{ s }}</option>
+                </select>
+                <mat-icon class="select-arrow">expand_more</mat-icon>
+              }
             </div>
           </div>
           <div class="form-field">
@@ -155,13 +157,9 @@
             </label>
             <div class="field-wrap">
               <mat-icon class="field-icon">attach_money</mat-icon>
-              <input
-                class="field-input"
-                type="text"
-                placeholder="Select vehicle &amp; dates"
-                [formField]="bookingForm.amount"
-                style="cursor: default; opacity: 0.85"
-              />
+              <div class="field-input readonly-box">
+                {{ newBooking().amount || '---' }}
+              </div>
             </div>
           </div>
         </div>
@@ -174,7 +172,12 @@
         <mat-icon style="font-size: 16px; width: 16px; height: 16px">close</mat-icon>
         Cancel
       </button>
-      <button class="act-primary" [class.act-danger]="isDelete" (click)="onConfirm()">
+      <button
+        class="act-primary"
+        [class.act-danger]="isDelete"
+        (click)="onConfirm()"
+        [disabled]="!isDelete && bookingForm().invalid()"
+      >
         <mat-icon style="font-size: 16px; width: 16px; height: 16px">{{ confirmIcon }}</mat-icon>
         {{ confirmLabel }}
       </button>

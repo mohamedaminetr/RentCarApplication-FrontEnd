@@ -1,7 +1,16 @@
-export type DialogMode = 'new' | 'edit' | 'delete' | null;
+export type DialogMode =
+  | 'new'
+  | 'edit'
+  | 'delete'
+  | 'approve'
+  | 'start'
+  | 'complete'
+  | 'cancel'
+  | null;
 
 export class Booking {
-  id: number = 0;
+  id: any = 0;
+  _id?: string;
   initials: string = '';
   clientName: string = '';
   bookingId: string = '';
@@ -9,8 +18,8 @@ export class Booking {
   plate: string = '';
   pickup: string = '';
   returnDate: string = '';
-  status: 'Pending' | 'Confirmed' | 'Completed' | 'Cancelled' = 'Pending';
-  amount: string = '0.00';
+  status: 'Pending' | 'Approved' | 'Active' | 'Completed' | 'Canceled' | 'Expired' = 'Pending';
+  amount: string | number = '0.00';
 
   constructor(data?: Partial<Booking>) {
     if (data) {

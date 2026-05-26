@@ -17,7 +17,7 @@
           >
         </div>
       }
-      @if (vehicle.status === 'available') {
+      @if (vehicle.status === 'Available') {
         <div class="hero-overlay">
           <span class="badge" [class]="statusClass">{{ statusLabel }}</span>
         </div>
@@ -115,29 +115,31 @@
 
     <!-- Actions -->
     <div class="detail-actions">
-      @if (vehicle.status === 'available') {
+      @if (vehicle.status === 'Available') {
         <button class="act-primary">
           <mat-icon style="font-size: 16px; width: 16px; height: 16px">directions_car</mat-icon>
           Rent Now
         </button>
       }
-      @if (vehicle.status === 'rented') {
+      @if (vehicle.status === 'Rented') {
         <button class="act-primary">
           <mat-icon style="font-size: 16px; width: 16px; height: 16px">receipt_long</mat-icon>
           View Rental
         </button>
       }
-      @if (vehicle.status === 'service') {
+      @if (vehicle.status === 'Maintenance') {
         <button class="act-primary">
           <mat-icon style="font-size: 16px; width: 16px; height: 16px">build</mat-icon>
           View Service
         </button>
       }
 
-      <button class="act-secondary" (click)="onEdit()">
-        <mat-icon style="font-size: 16px; width: 16px; height: 16px">edit</mat-icon>
-        Edit
-      </button>
+      @if (auth.currentUser()?.role === 'admin') {
+        <button class="act-secondary" (click)="onEdit()">
+          <mat-icon style="font-size: 16px; width: 16px; height: 16px">edit</mat-icon>
+          Edit
+        </button>
+      }
 
       <button class="act-secondary" (click)="onCancel()">
         <mat-icon style="font-size: 16px; width: 16px; height: 16px">arrow_back</mat-icon>

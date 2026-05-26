@@ -1,6 +1,7 @@
 export class User {
-  id: number = 0;
-  firstName: string = '';
+  public id: any = 0;
+  public _id?: string;
+  public firstName: string = '';
   lastName: string = '';
   age: number = 0;
   sexe: string = ''; // Matches VARCHAR(10)

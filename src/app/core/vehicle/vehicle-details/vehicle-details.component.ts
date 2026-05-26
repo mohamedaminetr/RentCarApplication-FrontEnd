@@ -1,7 +1,8 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { Vehicle } from '../../../models/vehicle.model';
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-vehicle-details',
@@ -10,6 +11,7 @@ import { Vehicle } from '../../../models/vehicle.model';
   styleUrls: ['./vehicle-details.component.scss'],
 })
 export class VehicleDetailsComponent {
+  public auth = inject(AuthService);
   @Input() public vehicle!: Vehicle;
   @Input() public isConfirming = false;
   @Output() public close = new EventEmitter<void>();
@@ -35,8 +37,8 @@ export class VehicleDetailsComponent {
   }
 
   public get statusLabel(): string {
-    if (this.vehicle.status === 'service') return 'In Service';
-    return this.vehicle.status.charAt(0).toUpperCase() + this.vehicle.status.slice(1);
+    if (this.vehicle.status === 'Maintenance') return 'Maintenance';
+    return this.vehicle.status;
   }
 
   public get statusClass(): string {
